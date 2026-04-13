@@ -1,0 +1,20 @@
+spring:
+  application:
+    name: telemetry-processor-service
+  rabbitmq:
+    host: localhost
+    port: 5672
+    username: guest
+    password: guest
+  datasource:
+    url: jdbc:postgresql://localhost:5432/telemetrydb
+    username: telemetry
+    password: telemetry
+    driver-class-name: org.postgresql.Driver
+  jpa:
+    hibernate:
+      ddl-auto: update
+    show-sql: false
+
+server:
+  port: 8082
