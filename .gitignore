@@ -1,0 +1,51 @@
+# Maven build output
+/target/
+**/target/
+
+# Intellij IDEA
+/.idea/
+*.iml
+*.iws
+out/
+
+# Eclipse
+.project
+.classpath
+.settings/
+
+# NetBeans
+/nbproject/private/
+/build/
+/nbbuild/
+dist/
+
+# VS Code
+.vscode/
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# Logs
+*.log
+
+# Temporary files
+*.tmp
+*.temp
+*.swp
+*~
+
+# Generated Spring Boot file
+spring-boot-devtools.properties
+
+# Docker
+docker-compose.override.yml
+
+# Others
+*.class
+*.jar
+*.war
+*.ear
+
+# Local Maven repository (not in project, but just in case)
+/.m2/
