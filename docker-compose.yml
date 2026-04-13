@@ -18,9 +18,16 @@ services:
     environment:
       POSTGRES_USER: telemetry
       POSTGRES_PASSWORD: telemetry
-      POSTGRES_DB: telemetrydb
+      POSTGRES_DB: telemetry
+    volumes:
+      - ./init.sql:/docker-entrypoint-initdb.d/init.sql
+      - postgres_data:/var/lib/postgresql/data
     healthcheck:
-      test: ["CMD-SHELL", "pg_isready -U telemetry"]
+      test: ["CMD-SHELL", "pg_isready -U telemetry -d telemetry"]
       interval: 10s
       timeout: 5s
       retries: 5
+    command: ["postgres", "-c", "log_statement=all"]
+
+volumes:
+  postgres_data:
