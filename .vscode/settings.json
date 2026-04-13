@@ -1,12 +1,22 @@
 {
     "java.compile.nullAnalysis.mode": "automatic",
+    "java.configuration.updateBuildConfiguration": "automatic",
     "maven.terminal.favorites": [
         {
-            "alias": "Spring Boot Run",
-            "command": "sprinb-boot:run"
+            "alias": "Root Compile",
+            "command": "compile -DskipTests"
         },
         {
+            "alias": "Root Install",
+            "command": "install -DskipTests"
+        },
+        {
+            "alias": "Spring Boot Run",
             "command": "spring-boot:run",
+            "debug": false
+        },
+        {
+            "command": "-Pstandalone spring-boot:run",
             "debug": false
         }
     ]
