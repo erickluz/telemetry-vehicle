@@ -5,9 +5,11 @@ import org.erick.shared.model.TelemetryEvent;
 import org.erick.shared.model.Vehicle;
 import org.erick.shared.model.VehicleInfo;
 import org.erick.shared.model.VehicleTelemetryData;
+import org.erick.vehicletelemetrydashboard.model.TelemetryRecordView;
 import org.erick.vehicletelemetrydashboard.model.TelemetrySnapshotEmbeddable;
 import org.erick.vehicletelemetrydashboard.model.VehicleEntity;
 import org.erick.vehicletelemetrydashboard.model.VehicleInfoEmbeddable;
+import org.erick.vehicletelemetrydashboard.repository.TelemetryRecordViewRepository;
 import org.erick.vehicletelemetrydashboard.repository.VehicleRepository;
 import java.util.List;
 import java.util.Optional;
@@ -17,10 +19,14 @@ import org.springframework.transaction.annotation.Transactional;
 @Service
 public class VehicleService {
 
-    private final VehicleRepository vehicleRepository;
+    private static final org.slf4j.Logger log = org.slf4j.LoggerFactory.getLogger(VehicleService.class);
 
-    public VehicleService(VehicleRepository vehicleRepository) {
+    private final VehicleRepository vehicleRepository;
+    private final TelemetryRecordViewRepository telemetryDataRepository;
+
+    public VehicleService(VehicleRepository vehicleRepository, TelemetryRecordViewRepository telemetryDataRepository) {
         this.vehicleRepository = vehicleRepository;
+        this.telemetryDataRepository = telemetryDataRepository;
     }
 
     @Transactional(readOnly = true)
@@ -54,6 +60,7 @@ public class VehicleService {
     @Transactional
     public void updateLatestTelemetry(String vehicleId, TelemetryEvent event) {
         vehicleRepository.findById(vehicleId).ifPresent(vehicle -> {
+            log.info("Atualizando telemetria do veiculo {} com os dados do evento {}", vehicleId, event);
             TelemetrySnapshotEmbeddable snapshot = vehicle.getLatestTelemetry();
             if (snapshot == null) {
                 snapshot = new TelemetrySnapshotEmbeddable();
@@ -130,5 +137,16 @@ public class VehicleService {
         }
 
         return vehicle;
+    }
+
+    public void saveTelemetryEvent(TelemetryEvent event) {
+        TelemetryRecordView telemetry = new TelemetryRecordView();
+        telemetry.setVehicleId(event.getVehicleId());
+        telemetry.setTimestamp(event.getTimestamp());
+        telemetry.setSpeed(event.getSpeed());
+        telemetry.setTemperature(event.getTemperature());
+        telemetry.setFuelLevel(event.getFuelLevel());
+
+        telemetryDataRepository.save(telemetry);
     }
 }

@@ -23,6 +23,7 @@ public class DashboardEventConsumer {
     @RabbitListener(queues = "vehicle.dashboard.telemetry")
     public void consumeTelemetry(TelemetryEvent event) {
         brokerEventBufferService.addTelemetryEvent(event);
+        vehicleService.saveTelemetryEvent(event);
         vehicleService.updateLatestTelemetry(event.getVehicleId(), event);
     }
 
