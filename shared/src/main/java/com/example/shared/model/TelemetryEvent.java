@@ -1,15 +1,31 @@
-package com.example.telemetryprocessorservice.model;
+package com.example.shared.model;
 
+import jakarta.validation.constraints.Min;
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
 import java.time.Instant;
 
 public class TelemetryEvent {
 
+    @NotBlank
     private String vehicleId;
+
+    @NotNull
     private Instant timestamp;
+
+    @NotNull
     private Double latitude;
+
+    @NotNull
     private Double longitude;
+
+    @Min(0)
     private Double speed;
+
+    @Min(0)
     private Double temperature;
+
+    @Min(0)
     private Double fuelLevel;
 
     public String getVehicleId() {
@@ -66,5 +82,35 @@ public class TelemetryEvent {
 
     public void setFuelLevel(Double fuelLevel) {
         this.fuelLevel = fuelLevel;
+    }
+
+    public GeoLocation getLocation() {
+        GeoLocation location = new GeoLocation();
+        location.setLatitude(latitude);
+        location.setLongitude(longitude);
+        return location;
+    }
+
+    public void setLocation(GeoLocation location) {
+        if (location == null) {
+            this.latitude = null;
+            this.longitude = null;
+            return;
+        }
+        this.latitude = location.getLatitude();
+        this.longitude = location.getLongitude();
+    }
+
+    @Override
+    public String toString() {
+        return "TelemetryEvent{" +
+                "vehicleId='" + vehicleId + '\'' +
+                ", timestamp=" + timestamp +
+                ", latitude=" + latitude +
+                ", longitude=" + longitude +
+                ", speed=" + speed +
+                ", temperature=" + temperature +
+                ", fuelLevel=" + fuelLevel +
+                '}';
     }
 }

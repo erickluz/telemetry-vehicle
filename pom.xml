@@ -27,6 +27,7 @@
     </dependencyManagement>
 
     <modules>
+        <module>shared</module>
         <module>vehicle-ingestion-service</module>
         <module>telemetry-processor-service</module>
         <module>notification-service</module>

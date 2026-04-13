@@ -1,7 +1,7 @@
 package com.example.telemetryprocessorservice.processor;
 
-import com.example.telemetryprocessorservice.model.AlertEvent;
-import com.example.telemetryprocessorservice.model.TelemetryEvent;
+import com.example.shared.model.AlertEvent;
+import com.example.shared.model.TelemetryEvent;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.amqp.rabbit.annotation.RabbitListener;

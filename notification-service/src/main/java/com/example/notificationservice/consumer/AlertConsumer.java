@@ -1,6 +1,6 @@
 package com.example.notificationservice.consumer;
 
-import com.example.notificationservice.model.AlertEvent;
+import com.example.shared.model.AlertEvent;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.amqp.rabbit.annotation.RabbitListener;

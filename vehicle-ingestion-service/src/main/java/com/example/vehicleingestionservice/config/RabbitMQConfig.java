@@ -28,6 +28,6 @@ public class RabbitMQConfig {
 
     @Bean
     public Binding telemetryBinding(Queue telemetryQueue, DirectExchange telemetryExchange) {
-        return BindingBuilder.bind(telemetryQueue).to(telemetryExchange).with("telemetry.events");
+        return BindingBuilder.bind(telemetryQueue).to(telemetryExchange).with("vehicle.telemetry");
     }
 }

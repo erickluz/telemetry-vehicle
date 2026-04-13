@@ -1,4 +1,4 @@
-package com.example.telemetryprocessorservice.model;
+package com.example.shared.model;
 
 import java.time.Instant;
 

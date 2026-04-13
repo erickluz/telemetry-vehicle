@@ -1,6 +1,6 @@
 package com.example.vehicleingestionservice.controller;
 
-import com.example.vehicleingestionservice.model.TelemetryEvent;
+import com.example.shared.model.TelemetryEvent;
 import com.example.vehicleingestionservice.messaging.TelemetryProducer;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;

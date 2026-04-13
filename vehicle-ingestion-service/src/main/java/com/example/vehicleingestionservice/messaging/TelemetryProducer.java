@@ -1,6 +1,6 @@
 package com.example.vehicleingestionservice.messaging;
 
-import com.example.vehicleingestionservice.model.TelemetryEvent;
+import com.example.shared.model.TelemetryEvent;
 import org.springframework.amqp.rabbit.core.RabbitTemplate;
 import org.springframework.stereotype.Component;
 
