@@ -1,0 +1,22 @@
+spring:
+  application:
+    name: vehicle-telemetry-dashboard
+  datasource:
+    url: jdbc:postgresql://localhost:5432/telemetry
+    username: telemetry
+    password: telemetry
+    driver-class-name: org.postgresql.Driver
+  jpa:
+    hibernate:
+      ddl-auto: update
+    show-sql: false
+  rabbitmq:
+    host: localhost
+    port: 5672
+    username: guest
+    password: guest
+  thymeleaf:
+    cache: false
+
+server:
+  port: 8084

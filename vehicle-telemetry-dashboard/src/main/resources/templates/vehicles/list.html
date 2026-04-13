@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html lang="pt-BR" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Veiculos</title>
+    <link rel="stylesheet" th:href="@{/css/app.css}">
+</head>
+<body>
+<div class="shell">
+    <aside class="sidebar">
+        <div>
+            <p class="eyebrow">Fleet Management</p>
+            <h1>Veiculos</h1>
+            <p class="sidebar-copy">Tabela de veiculos relacionada ao CRUD de cadastro alinhado ao modulo compartilhado.</p>
+        </div>
+        <nav class="menu">
+            <a class="menu-item" th:href="@{/dashboard}">Dashboard</a>
+            <a class="menu-item active" th:href="@{/vehicles}">Veiculos</a>
+        </nav>
+    </aside>
+
+    <main class="content">
+        <section class="hero compact">
+            <div>
+                <p class="eyebrow">CRUD</p>
+                <h2>Tabela de veiculos</h2>
+                <p class="hero-copy">Consulte, edite e exclua os registros da frota cadastrada.</p>
+            </div>
+            <a class="button primary" th:href="@{/vehicles/new}">Cadastrar veiculo</a>
+        </section>
+
+        <div class="flash success" th:if="${successMessage}" th:text="${successMessage}">Operacao realizada.</div>
+        <div class="flash error" th:if="${errorMessage}" th:text="${errorMessage}">Erro.</div>
+
+        <section class="panel full-width">
+            <div class="panel-header">
+                <div>
+                    <p class="eyebrow">Registros</p>
+                    <h3>Lista da frota</h3>
+                </div>
+                <span th:text="${#lists.size(vehicles)} + ' veiculos'">0 veiculos</span>
+            </div>
+            <div class="table-wrap">
+                <table>
+                    <thead>
+                    <tr>
+                        <th>ID</th>
+                        <th>Placa</th>
+                        <th>Fabricante</th>
+                        <th>Modelo</th>
+                        <th>Ano</th>
+                        <th>Status</th>
+                        <th>Ultima telemetria</th>
+                        <th>Acoes</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    <tr th:if="${#lists.isEmpty(vehicles)}">
+                        <td colspan="8">Nenhum veiculo cadastrado.</td>
+                    </tr>
+                    <tr th:each="vehicle : ${vehicles}">
+                        <td th:text="${vehicle.id}">VH-001</td>
+                        <td th:text="${vehicle.info.plate}">ABC1234</td>
+                        <td th:text="${vehicle.info.manufacturer != null ? vehicle.info.manufacturer : '-'}">Marca</td>
+                        <td th:text="${vehicle.info.model != null ? vehicle.info.model : '-'}">Modelo</td>
+                        <td th:text="${vehicle.info.modelYear != null ? vehicle.info.modelYear : '-'}">2026</td>
+                        <td><span class="badge" th:text="${vehicle.status}">ACTIVE</span></td>
+                        <td th:text="${vehicle.latestTelemetry != null ? #temporals.format(vehicle.latestTelemetry.timestamp, 'dd/MM/yyyy HH:mm:ss') : 'Sem telemetria'}">Sem telemetria</td>
+                        <td class="actions">
+                            <a class="button secondary" th:href="@{|/vehicles/${vehicle.id}/edit|}">Editar</a>
+                            <form th:action="@{|/vehicles/${vehicle.id}/delete|}" method="post">
+                                <button class="button danger" type="submit">Excluir</button>
+                            </form>
+                        </td>
+                    </tr>
+                    </tbody>
+                </table>
+            </div>
+        </section>
+    </main>
+</div>
+</body>
+</html>

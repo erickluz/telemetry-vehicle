@@ -1,0 +1,113 @@
+<!DOCTYPE html>
+<html lang="pt-BR" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Vehicle Telemetry Dashboard</title>
+    <link rel="stylesheet" th:href="@{/css/app.css}">
+</head>
+<body>
+<div class="shell">
+    <aside class="sidebar">
+        <div>
+            <p class="eyebrow">Telemetry Vehicle</p>
+            <h1>Vehicle Telemetry Dashboard</h1>
+            <p class="sidebar-copy">Visao operacional da frota com dados do PostgreSQL e eventos recentes do RabbitMQ.</p>
+        </div>
+        <nav class="menu">
+            <a class="menu-item active" th:href="@{/dashboard}">Dashboard</a>
+            <a class="menu-item" th:href="@{/vehicles}">Veiculos</a>
+        </nav>
+    </aside>
+
+    <main class="content">
+        <section class="hero">
+            <div>
+                <p class="eyebrow">Painel inicial</p>
+                <h2>Monitoramento de telemetria</h2>
+                <p class="hero-copy">Resumo da frota, ultimas telemetrias persistidas e alertas mais recentes recebidos.</p>
+            </div>
+        </section>
+
+        <section class="stats-grid four-cards">
+            <article class="stat-card">
+                <span>Total de veiculos</span>
+                <strong th:text="${dashboard.totalVehicles}">0</strong>
+            </article>
+            <article class="stat-card">
+                <span>Veiculos ativos</span>
+                <strong th:text="${dashboard.activeVehicles}">0</strong>
+            </article>
+            <article class="stat-card">
+                <span>Telemetrias no banco</span>
+                <strong th:text="${dashboard.telemetryRecords}">0</strong>
+            </article>
+            <article class="stat-card accent">
+                <span>Alertas recentes</span>
+                <strong th:text="${#lists.size(dashboard.recentBrokerAlerts)}">0</strong>
+            </article>
+        </section>
+
+        <section class="panel-grid dashboard-grid">
+            <article class="panel">
+                <div class="panel-header">
+                    <div>
+                        <p class="eyebrow">PostgreSQL</p>
+                        <h3>Ultimas telemetrias</h3>
+                    </div>
+                    <span th:text="${dashboard.latestDatabaseEvent != null ? #temporals.format(dashboard.latestDatabaseEvent, 'dd/MM/yyyy HH:mm:ss') : 'Sem registros'}">Sem registros</span>
+                </div>
+                <div class="table-wrap">
+                    <table>
+                        <thead>
+                        <tr>
+                            <th>Veiculo</th>
+                            <th>Data/Hora</th>
+                            <th>Velocidade</th>
+                            <th>Temperatura</th>
+                            <th>Combustivel</th>
+                        </tr>
+                        </thead>
+                        <tbody>
+                        <tr th:if="${#lists.isEmpty(dashboard.recentDatabaseTelemetry)}">
+                            <td colspan="5">Nenhuma telemetria persistida encontrada.</td>
+                        </tr>
+                        <tr th:each="item : ${dashboard.recentDatabaseTelemetry}">
+                            <td th:text="${item.vehicleId}">VH-001</td>
+                            <td th:text="${#temporals.format(item.timestamp, 'dd/MM/yyyy HH:mm:ss')}">13/04/2026 10:00:00</td>
+                            <td th:text="${item.speed != null ? #numbers.formatDecimal(item.speed, 1, 1) + ' km/h' : '-'}">40.0 km/h</td>
+                            <td th:text="${item.temperature != null ? #numbers.formatDecimal(item.temperature, 1, 1) + ' C' : '-'}">25.0 C</td>
+                            <td th:text="${item.fuelLevel != null ? #numbers.formatDecimal(item.fuelLevel, 1, 1) + '%' : '-'}">78.0%</td>
+                        </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </article>
+
+            <article class="panel">
+                <div class="panel-header">
+                    <div>
+                        <p class="eyebrow">RabbitMQ</p>
+                        <h3>Alertas recentes</h3>
+                    </div>
+                    <span th:text="${#lists.size(dashboard.recentBrokerAlerts)} + ' alertas'">0 alertas</span>
+                </div>
+                <div class="stream-list alerts">
+                    <div class="stream-card" th:if="${#lists.isEmpty(dashboard.recentBrokerAlerts)}">
+                        Nenhum alerta recebido pelo dashboard.
+                    </div>
+                    <div class="stream-card" th:each="alert : ${dashboard.recentBrokerAlerts}">
+                        <div class="stream-card-header">
+                            <strong th:text="${alert.vehicleId}">VH-001</strong>
+                            <span th:text="${alert.timestamp != null ? #temporals.format(alert.timestamp, 'dd/MM/yyyy HH:mm:ss') : '-'}">13/04/2026 10:00:00</span>
+                        </div>
+                        <p th:text="${alert.alertType}">SAMPLE_ALERT</p>
+                        <p th:text="${alert.description}">Descricao do alerta</p>
+                    </div>
+                </div>
+            </article>
+        </section>
+    </main>
+</div>
+</body>
+</html>

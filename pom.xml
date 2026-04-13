@@ -31,6 +31,7 @@
         <module>vehicle-ingestion-service</module>
         <module>telemetry-processor-service</module>
         <module>notification-service</module>
+        <module>vehicle-telemetry-dashboard</module>
     </modules>
 
     <build>

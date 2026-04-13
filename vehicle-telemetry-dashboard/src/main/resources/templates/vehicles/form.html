@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html lang="pt-BR" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title th:text="${formMode == 'create' ? 'Cadastrar Veiculo' : 'Editar Veiculo'}">Veiculo</title>
+    <link rel="stylesheet" th:href="@{/css/app.css}">
+</head>
+<body>
+<div class="shell">
+    <aside class="sidebar">
+        <div>
+            <p class="eyebrow">Fleet Management</p>
+            <h1 th:text="${formMode == 'create' ? 'Cadastrar veiculo' : 'Editar veiculo'}">Cadastrar veiculo</h1>
+            <p class="sidebar-copy">Formulario Thymeleaf aderente ao objeto `Vehicle` do modulo `shared`.</p>
+        </div>
+        <nav class="menu">
+            <a class="menu-item" th:href="@{/dashboard}">Dashboard</a>
+            <a class="menu-item active" th:href="@{/vehicles}">Veiculos</a>
+        </nav>
+    </aside>
+
+    <main class="content">
+        <section class="hero compact">
+            <div>
+                <p class="eyebrow">Cadastro</p>
+                <h2 th:text="${formMode == 'create' ? 'Novo veiculo' : 'Atualizacao de veiculo'}">Novo veiculo</h2>
+                <p class="hero-copy">Preencha os dados do veiculo conforme a modelagem compartilhada do sistema.</p>
+            </div>
+            <a class="button secondary" th:href="@{/vehicles}">Voltar para tabela</a>
+        </section>
+
+        <section class="panel form-panel">
+            <form th:object="${vehicle}"
+                  th:action="${formAction}"
+                  method="post"
+                  class="vehicle-form">
+                <div class="field-grid">
+                    <div class="field">
+                        <label for="id">ID do veiculo</label>
+                        <input id="id" type="text" th:field="*{id}" th:readonly="${formMode == 'edit'}">
+                        <p class="field-error" th:if="${#fields.hasErrors('id')}" th:errors="*{id}">Erro</p>
+                    </div>
+                    <div class="field">
+                        <label for="status">Status</label>
+                        <select id="status" th:field="*{status}">
+                            <option th:each="status : ${vehicleStatuses}" th:value="${status}" th:text="${status}">ACTIVE</option>
+                        </select>
+                    </div>
+                    <div class="field">
+                        <label for="plate">Placa</label>
+                        <input id="plate" type="text" th:field="*{info.plate}">
+                        <p class="field-error" th:if="${#fields.hasErrors('info.plate')}" th:errors="*{info.plate}">Erro</p>
+                    </div>
+                    <div class="field">
+                        <label for="vin">VIN</label>
+                        <input id="vin" type="text" th:field="*{info.vin}">
+                    </div>
+                    <div class="field">
+                        <label for="manufacturer">Fabricante</label>
+                        <input id="manufacturer" type="text" th:field="*{info.manufacturer}">
+                    </div>
+                    <div class="field">
+                        <label for="model">Modelo</label>
+                        <input id="model" type="text" th:field="*{info.model}">
+                    </div>
+                    <div class="field">
+                        <label for="modelYear">Ano do modelo</label>
+                        <input id="modelYear" type="number" th:field="*{info.modelYear}">
+                        <p class="field-error" th:if="${#fields.hasErrors('info.modelYear')}" th:errors="*{info.modelYear}">Erro</p>
+                    </div>
+                    <div class="field">
+                        <label for="color">Cor</label>
+                        <input id="color" type="text" th:field="*{info.color}">
+                    </div>
+                </div>
+
+                <div class="form-actions">
+                    <button class="button primary" type="submit" th:text="${formMode == 'create' ? 'Salvar cadastro' : 'Salvar alteracoes'}">Salvar</button>
+                    <a class="button secondary" th:href="@{/vehicles}">Cancelar</a>
+                </div>
+            </form>
+        </section>
+    </main>
+</div>
+</body>
+</html>
