@@ -1,3 +1,10 @@
+# Compiled Java classes
+*.class
+*.jar
+*.war
+*.ear
+*.zip
+
 # Maven build output
 /target/
 **/target/
