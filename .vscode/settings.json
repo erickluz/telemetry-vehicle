@@ -1,3 +1,13 @@
 {
-    "java.compile.nullAnalysis.mode": "automatic"
+    "java.compile.nullAnalysis.mode": "automatic",
+    "maven.terminal.favorites": [
+        {
+            "alias": "Spring Boot Run",
+            "command": "sprinb-boot:run"
+        },
+        {
+            "command": "spring-boot:run",
+            "debug": false
+        }
+    ]
 }
