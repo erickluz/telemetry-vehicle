@@ -33,17 +33,9 @@ public class RabbitMQConfig {
     }
 
     @Bean
-    public Queue alertQueue() {
-        return new Queue("telemetry.alerts", true);
-    }
-
-    @Bean
     public Binding telemetryBinding(@Qualifier("telemetryQueue") Queue telemetryQueue, @Qualifier("telemetryEventsExchange") DirectExchange telemetryEventsExchange) {
         return BindingBuilder.bind(telemetryQueue).to(telemetryEventsExchange).with("telemetry.events");
     }
 
-    @Bean
-    public Binding alertBinding(@Qualifier("alertQueue") Queue alertQueue, @Qualifier("telemetryAlertsExchange") DirectExchange telemetryAlertsExchange) {
-        return BindingBuilder.bind(alertQueue).to(telemetryAlertsExchange).with("telemetry.alerts");
-    }
+    
 }
