@@ -1,5 +1,6 @@
 package org.erick.notificationservice.consumer;
 
+import org.erick.shared.messaging.RabbitMQConstants;
 import org.erick.shared.model.AlertEvent;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -11,7 +12,7 @@ public class AlertConsumer {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(AlertConsumer.class);
 
-    @RabbitListener(queues = "telemetry.alerts")
+    @RabbitListener(queues = RabbitMQConstants.Queues.TELEMETRY_ALERTS)
     public void receiveAlert(AlertEvent event) {
         LOGGER.info("Received alert for vehicle {}: {}", event.getVehicleId(), event.getAlertType());
         // TODO: implementar aÃ§Ã£o de notificaÃ§Ã£o / simulaÃ§Ã£o de envio

@@ -1,5 +1,6 @@
 package org.erick.notificationservice.config;
 
+import org.erick.shared.messaging.RabbitMQConstants;
 import org.springframework.amqp.core.Binding;
 import org.springframework.amqp.core.BindingBuilder;
 import org.springframework.amqp.core.DirectExchange;
@@ -12,16 +13,16 @@ public class RabbitMQConfig {
 
     @Bean
     public DirectExchange alertsExchange() {
-        return new DirectExchange("telemetry.alerts.exchange", true, false);
+        return new DirectExchange(RabbitMQConstants.Exchanges.TELEMETRY_ALERTS, true, false);
     }
 
     @Bean
     public Queue alertsQueue() {
-        return new Queue("telemetry.alerts", true);
+        return new Queue(RabbitMQConstants.Queues.TELEMETRY_ALERTS, true);
     }
 
     @Bean
     public Binding alertsBinding(Queue alertsQueue, DirectExchange alertsExchange) {
-        return BindingBuilder.bind(alertsQueue).to(alertsExchange).with("telemetry.alerts");
+        return BindingBuilder.bind(alertsQueue).to(alertsExchange).with(RabbitMQConstants.RoutingKeys.TELEMETRY_ALERTS);
     }
 }

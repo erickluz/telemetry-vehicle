@@ -1,5 +1,6 @@
 package org.erick.vehicletelemetrydashboard.config;
 
+import org.erick.shared.messaging.RabbitMQConstants;
 import org.springframework.amqp.core.Binding;
 import org.springframework.amqp.core.BindingBuilder;
 import org.springframework.amqp.core.DirectExchange;
@@ -19,35 +20,35 @@ public class RabbitMQConfig {
 
     @Bean
     public DirectExchange telemetryEventsExchange() {
-        return new DirectExchange("telemetry.events.exchange", true, false);
+        return new DirectExchange(RabbitMQConstants.Exchanges.TELEMETRY_EVENTS, true, false);
     }
 
     @Bean
     public DirectExchange telemetryAlertsExchange() {
-        return new DirectExchange("telemetry.alerts.exchange", true, false);
+        return new DirectExchange(RabbitMQConstants.Exchanges.TELEMETRY_ALERTS, true, false);
     }
 
     @Bean
     public Queue dashboardTelemetryQueue() {
-        return new Queue("vehicle.dashboard.telemetry", true);
+        return new Queue(RabbitMQConstants.Queues.DASHBOARD_TELEMETRY, true);
     }
 
     @Bean
     public Queue dashboardAlertsQueue() {
-        return new Queue("vehicle.dashboard.alerts", true);
+        return new Queue(RabbitMQConstants.Queues.DASHBOARD_ALERTS, true);
     }
 
     @Bean
     public Binding dashboardTelemetryBinding(
             @Qualifier("dashboardTelemetryQueue") Queue queue,
             @Qualifier("telemetryEventsExchange") DirectExchange exchange) {
-        return BindingBuilder.bind(queue).to(exchange).with("telemetry.events");
+        return BindingBuilder.bind(queue).to(exchange).with(RabbitMQConstants.RoutingKeys.TELEMETRY_EVENTS);
     }
 
     @Bean
     public Binding dashboardAlertsBinding(
             @Qualifier("dashboardAlertsQueue") Queue queue,
             @Qualifier("telemetryAlertsExchange") DirectExchange exchange) {
-        return BindingBuilder.bind(queue).to(exchange).with("telemetry.alerts");
+        return BindingBuilder.bind(queue).to(exchange).with(RabbitMQConstants.RoutingKeys.TELEMETRY_ALERTS);
     }
 }

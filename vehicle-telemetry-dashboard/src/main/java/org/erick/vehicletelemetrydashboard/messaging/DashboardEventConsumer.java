@@ -1,5 +1,6 @@
 package org.erick.vehicletelemetrydashboard.messaging;
 
+import org.erick.shared.messaging.RabbitMQConstants;
 import org.erick.shared.model.AlertEvent;
 import org.erick.shared.model.TelemetryEvent;
 import org.erick.vehicletelemetrydashboard.service.BrokerEventBufferService;
@@ -20,13 +21,13 @@ public class DashboardEventConsumer {
         this.vehicleService = vehicleService;
     }
 
-    @RabbitListener(queues = "vehicle.dashboard.telemetry")
+    @RabbitListener(queues = RabbitMQConstants.Queues.DASHBOARD_TELEMETRY)
     public void consumeTelemetry(TelemetryEvent event) {
         brokerEventBufferService.addTelemetryEvent(event);
         vehicleService.updateLatestTelemetry(event.getVehicleId(), event);
     }
 
-    @RabbitListener(queues = "vehicle.dashboard.alerts")
+    @RabbitListener(queues = RabbitMQConstants.Queues.DASHBOARD_ALERTS)
     public void consumeAlert(AlertEvent event) {
         brokerEventBufferService.addAlertEvent(event);
     }

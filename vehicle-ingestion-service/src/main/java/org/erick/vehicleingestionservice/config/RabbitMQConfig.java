@@ -1,5 +1,6 @@
 package org.erick.vehicleingestionservice.config;
 
+import org.erick.shared.messaging.RabbitMQConstants;
 import org.springframework.amqp.core.Binding;
 import org.springframework.amqp.core.BindingBuilder;
 import org.springframework.amqp.core.DirectExchange;
@@ -18,16 +19,16 @@ public class RabbitMQConfig {
 
     @Bean
     public DirectExchange telemetryExchange() {
-        return new DirectExchange("telemetry.events.exchange", true, false);
+        return new DirectExchange(RabbitMQConstants.Exchanges.TELEMETRY_EVENTS, true, false);
     }
 
     @Bean
     public Queue telemetryQueue() {
-        return new Queue("telemetry.events", true);
+        return new Queue(RabbitMQConstants.Queues.TELEMETRY_EVENTS, true);
     }
 
     @Bean
     public Binding telemetryBinding(Queue telemetryQueue, DirectExchange telemetryExchange) {
-        return BindingBuilder.bind(telemetryQueue).to(telemetryExchange).with("telemetry.events");
+        return BindingBuilder.bind(telemetryQueue).to(telemetryExchange).with(RabbitMQConstants.RoutingKeys.TELEMETRY_EVENTS);
     }
 }
