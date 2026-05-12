@@ -22,13 +22,4 @@ public class RabbitMQConfig {
         return new DirectExchange(RabbitMQConstants.Exchanges.TELEMETRY_EVENTS, true, false);
     }
 
-    @Bean
-    public Queue telemetryQueue() {
-        return new Queue(RabbitMQConstants.Queues.TELEMETRY_EVENTS, true);
-    }
-
-    @Bean
-    public Binding telemetryBinding(Queue telemetryQueue, DirectExchange telemetryExchange) {
-        return BindingBuilder.bind(telemetryQueue).to(telemetryExchange).with(RabbitMQConstants.RoutingKeys.TELEMETRY_EVENTS);
-    }
 }

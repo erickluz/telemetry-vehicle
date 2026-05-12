@@ -1,5 +1,7 @@
 package org.erick.telemetryprocessorservice.processor;
 
+import java.io.IOException;
+import java.time.Instant;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
@@ -15,8 +17,7 @@ import org.springframework.amqp.rabbit.annotation.RabbitListener;
 import org.springframework.amqp.rabbit.core.RabbitTemplate;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
-
-import com.rabbitmq.client.AMQP.Channel;
+import com.rabbitmq.client.Channel;
 
 @Component
 public class TelemetryProcessor {
@@ -32,24 +33,41 @@ public class TelemetryProcessor {
     }
 
     @RabbitListener(queues = RabbitMQConstants.Queues.TELEMETRY_EVENTS)
-    public void receiveTelemetry(TelemetryEvent event, Message message, Channel channel) {
+    public void receiveTelemetry(TelemetryEvent event, Message message, Channel channel) throws IOException {
         LOGGER.info("Received telemetry event for vehicle {}", event.getVehicleId());
-        int retryCount = getRetryCount(message);
-        LOGGER.debug("Retry count for message: {}", retryCount);
-
         try {
             processaEvento(event);
+            confirmarMensagem(message, channel);
         } catch (Exception e) {
+            tratarRetryDLQ(event, message, channel, e);
+        }
+    }
+
+    private void tratarRetryDLQ(TelemetryEvent event, Message message, Channel channel, Exception e) throws IOException {
+        int retryCount = getRetryCount(message);
+        LOGGER.info("Retry count for message: {}", retryCount);
         if (retryCount >= 3) {
-            // envia para DLQ final
-        } else {
             rabbitTemplate.convertAndSend(
                     RabbitMQConstants.Exchanges.TELEMETRY_EVENTS,
-                    RabbitMQConstants.RoutingKeys.TELEMETRY_EVENTS_RETRY,
+                    RabbitMQConstants.RoutingKeys.TELEMETRY_EVENTS_DLQ,
                     event);
+            confirmarMensagem(message, channel);
+        } else {
+            rejeitarMensagem(message, channel);
         }
-        }
+        LOGGER.error("Erro ao processar mensagem", e);
+    }
 
+    private void confirmarMensagem(Message message, Channel channel) throws IOException {
+        long deliveryTag = message.getMessageProperties().getDeliveryTag();
+        LOGGER.info("Confirmando mensagem com deliveryTag: {}", deliveryTag);
+        channel.basicAck(deliveryTag, false);
+    }
+
+    private void rejeitarMensagem(Message message, Channel channel) throws IOException {
+        long deliveryTag = message.getMessageProperties().getDeliveryTag();
+        LOGGER.info("Rejeitando mensagem com deliveryTag: {}", deliveryTag);
+        channel.basicNack(deliveryTag, false, false);
     }
 
     @SuppressWarnings("unchecked")
@@ -72,11 +90,15 @@ public class TelemetryProcessor {
     }
 
     private void processaEvento(TelemetryEvent event) throws Exception {
+        if (event.getTimestamp().isAfter(Instant.now())) {
+            throw new IllegalArgumentException("Timestamp do evento é inválido: " + event.getTimestamp());
+        }
         telemetryService.saveTelemetryEvent(event);
-
         if (event.getSpeed() > 100) {
             sendAlert(event);
+            LOGGER.info("Evento de alerta telemetria para veículo {}", event.getVehicleId());
         }
+        LOGGER.info("Evento de telemetria processado {}", event.getVehicleId());
     }
 
     private void sendAlert(TelemetryEvent event) {

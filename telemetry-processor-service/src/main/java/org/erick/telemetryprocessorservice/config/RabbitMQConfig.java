@@ -28,7 +28,10 @@ public class RabbitMQConfig {
 
     @Bean
     public Queue telemetryQueue() {
-        return new Queue(RabbitMQConstants.Queues.TELEMETRY_EVENTS, true);
+        return QueueBuilder.durable(RabbitMQConstants.Queues.TELEMETRY_EVENTS)
+                .withArgument("x-dead-letter-exchange", RabbitMQConstants.Exchanges.TELEMETRY_EVENTS)
+                .withArgument("x-dead-letter-routing-key", RabbitMQConstants.RoutingKeys.TELEMETRY_EVENTS_RETRY)
+                .build();
     }
 
     @Bean
