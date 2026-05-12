@@ -1,53 +1,37 @@
 <mxfile host="65bd71144e">
     <diagram id="X4KkakveagGGw_kcijjk" name="Page-1">
-        <mxGraphModel dx="1317" dy="670" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="850" pageHeight="1100" math="0" shadow="0">
+        <mxGraphModel dx="771" dy="901" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="850" pageHeight="1100" math="0" shadow="0">
             <root>
                 <mxCell id="0"/>
                 <mxCell id="1" parent="0"/>
-                <mxCell id="2" value="" style="rounded=0;whiteSpace=wrap;html=1;" parent="1" vertex="1">
-                    <mxGeometry x="455" y="130" width="260" height="720" as="geometry"/>
-                </mxCell>
-                <mxCell id="3" value="" style="rounded=0;whiteSpace=wrap;html=1;" parent="1" vertex="1">
-                    <mxGeometry x="190" y="130" width="240" height="720" as="geometry"/>
+                <mxCell id="87" value="" style="rounded=0;whiteSpace=wrap;html=1;" parent="1" vertex="1">
+                    <mxGeometry x="210" y="150" width="500" height="620" as="geometry"/>
                 </mxCell>
                 <mxCell id="4" value="" style="edgeStyle=none;html=1;" parent="1" source="6" target="26" edge="1">
                     <mxGeometry relative="1" as="geometry"/>
                 </mxCell>
                 <mxCell id="6" value="vehicle-ingestion-service" style="ellipse;whiteSpace=wrap;html=1;fillColor=#d5e8d4;gradientColor=#97d077;strokeColor=#82b366;" parent="1" vertex="1">
-                    <mxGeometry x="20" y="230" width="140" height="100" as="geometry"/>
+                    <mxGeometry x="58" y="201" width="140" height="100" as="geometry"/>
                 </mxCell>
                 <mxCell id="7" style="edgeStyle=none;html=1;entryX=0;entryY=0.5;entryDx=0;entryDy=0;entryPerimeter=0;" parent="1" source="26" target="30" edge="1">
                     <mxGeometry relative="1" as="geometry"/>
-                </mxCell>
-                <mxCell id="8" value="&lt;div style=&quot;color: rgb(248, 248, 242); background-color: rgb(39, 40, 34); font-family: Consolas, &amp;quot;Courier New&amp;quot;, monospace; font-size: 14px; line-height: 19px; white-space-collapse: preserve;&quot;&gt;&lt;span style=&quot;color: rgb(230, 219, 116); font-size: 10px;&quot;&gt;telemetry.events&lt;/span&gt;&lt;/div&gt;" style="edgeLabel;html=1;align=center;verticalAlign=middle;resizable=0;points=[];" parent="7" vertex="1" connectable="0">
-                    <mxGeometry x="-0.0843" relative="1" as="geometry">
-                        <mxPoint y="-1" as="offset"/>
-                    </mxGeometry>
                 </mxCell>
                 <mxCell id="9" style="edgeStyle=none;html=1;exitX=1;exitY=0.5;exitDx=0;exitDy=0;exitPerimeter=0;entryX=0;entryY=0.5;entryDx=0;entryDy=0;" parent="1" source="30" target="37" edge="1">
                     <mxGeometry relative="1" as="geometry">
                         <mxPoint x="755.1998237567068" y="376.7381722049113" as="targetPoint"/>
                     </mxGeometry>
                 </mxCell>
-                <mxCell id="23" value="" style="group" parent="1" vertex="1" connectable="0">
-                    <mxGeometry x="745" y="681" width="170" height="170" as="geometry"/>
-                </mxCell>
-                <mxCell id="24" value="notification-service" style="ellipse;whiteSpace=wrap;html=1;fillColor=#d5e8d4;gradientColor=#97d077;strokeColor=#82b366;" parent="23" vertex="1">
-                    <mxGeometry x="-7.083333333333333" y="58.3846153846154" width="170" height="104.61538461538463" as="geometry"/>
-                </mxCell>
-                <mxCell id="25" style="edgeStyle=none;html=1;exitX=1;exitY=0.5;exitDx=0;exitDy=0;exitPerimeter=0;" parent="1" source="33" target="24" edge="1">
+                <mxCell id="25" style="edgeStyle=none;html=1;exitX=1;exitY=0.5;exitDx=0;exitDy=0;exitPerimeter=0;entryX=0;entryY=0.5;entryDx=0;entryDy=0;" parent="1" source="33" target="88" edge="1">
                     <mxGeometry relative="1" as="geometry">
                         <mxPoint x="640" y="173.08928571428578" as="sourcePoint"/>
+                        <mxPoint x="737.9355310895801" y="722.4833214661594" as="targetPoint"/>
                     </mxGeometry>
                 </mxCell>
                 <mxCell id="26" value="telemetry.events.exchange" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#fff2cc;strokeColor=#d6b656;gradientColor=#ffd966;fontSize=11;" parent="1" vertex="1">
-                    <mxGeometry x="233" y="250" width="140" height="60" as="geometry"/>
-                </mxCell>
-                <mxCell id="28" value="Exchanges" style="text;html=1;align=center;verticalAlign=middle;whiteSpace=wrap;rounded=0;fontStyle=1" parent="1" vertex="1">
-                    <mxGeometry x="200" y="130" width="60" height="30" as="geometry"/>
+                    <mxGeometry x="233" y="221" width="140" height="60" as="geometry"/>
                 </mxCell>
                 <mxCell id="29" value="" style="group;fontStyle=0" parent="1" vertex="1" connectable="0">
-                    <mxGeometry x="520" y="216" width="130" height="94" as="geometry"/>
+                    <mxGeometry x="520" y="190" width="130" height="94" as="geometry"/>
                 </mxCell>
                 <mxCell id="30" value="" style="outlineConnect=0;dashed=0;verticalLabelPosition=bottom;verticalAlign=top;align=center;html=1;shape=mxgraph.aws3.queue;fillColor=#D9A741;gradientColor=none;" parent="29" vertex="1">
                     <mxGeometry y="28" width="130" height="66" as="geometry"/>
@@ -56,7 +40,7 @@
                     <mxGeometry x="35" width="60" height="30" as="geometry"/>
                 </mxCell>
                 <mxCell id="32" value="" style="group" parent="1" vertex="1" connectable="0">
-                    <mxGeometry x="520" y="730" width="130" height="94" as="geometry"/>
+                    <mxGeometry x="520" y="651" width="130" height="94" as="geometry"/>
                 </mxCell>
                 <mxCell id="33" value="" style="outlineConnect=0;dashed=0;verticalLabelPosition=bottom;verticalAlign=top;align=center;html=1;shape=mxgraph.aws3.queue;fillColor=#D9A741;gradientColor=none;" parent="32" vertex="1">
                     <mxGeometry y="28" width="130" height="66" as="geometry"/>
@@ -64,27 +48,13 @@
                 <mxCell id="34" value="telemetry.notification" style="text;html=1;align=center;verticalAlign=middle;whiteSpace=wrap;rounded=0;" parent="32" vertex="1">
                     <mxGeometry x="35" width="60" height="30" as="geometry"/>
                 </mxCell>
-                <mxCell id="35" style="edgeStyle=orthogonalEdgeStyle;html=1;entryX=0.48;entryY=1.007;entryDx=0;entryDy=0;entryPerimeter=0;" parent="1" source="37" target="26" edge="1">
-                    <mxGeometry relative="1" as="geometry">
-                        <Array as="points">
-                            <mxPoint x="830" y="460"/>
-                            <mxPoint x="300" y="460"/>
-                        </Array>
-                        <mxPoint x="300" y="320" as="targetPoint"/>
-                    </mxGeometry>
-                </mxCell>
-                <mxCell id="36" value="&lt;div style=&quot;color: rgb(248, 248, 242); background-color: rgb(39, 40, 34); font-family: Consolas, &amp;quot;Courier New&amp;quot;, monospace; line-height: 19px; white-space-collapse: preserve;&quot;&gt;&lt;span style=&quot;color: rgb(230, 219, 116);&quot;&gt;telemtry.event.retry&lt;/span&gt;&lt;/div&gt;" style="edgeLabel;html=1;align=center;verticalAlign=middle;resizable=0;points=[];fontSize=10;" parent="35" vertex="1" connectable="0">
-                    <mxGeometry x="0.2547" y="2" relative="1" as="geometry">
-                        <mxPoint as="offset"/>
-                    </mxGeometry>
-                </mxCell>
-                <mxCell id="64" style="edgeStyle=orthogonalEdgeStyle;html=1;entryX=0.5;entryY=0;entryDx=0;entryDy=0;" parent="1" source="37" target="58" edge="1">
+                <mxCell id="64" style="edgeStyle=orthogonalEdgeStyle;html=1;" parent="1" source="37" target="58" edge="1">
                     <mxGeometry relative="1" as="geometry">
                         <mxPoint x="330" y="660" as="targetPoint"/>
                         <Array as="points">
                             <mxPoint x="680" y="277"/>
-                            <mxPoint x="680" y="600"/>
-                            <mxPoint x="310" y="600"/>
+                            <mxPoint x="680" y="530"/>
+                            <mxPoint x="303" y="530"/>
                         </Array>
                         <mxPoint x="770" y="340" as="sourcePoint"/>
                     </mxGeometry>
@@ -97,24 +67,21 @@
                 <mxCell id="76" style="edgeStyle=orthogonalEdgeStyle;html=1;entryX=0.5;entryY=0;entryDx=0;entryDy=0;exitX=0.5;exitY=0;exitDx=0;exitDy=0;" parent="1" source="37" target="26" edge="1">
                     <mxGeometry relative="1" as="geometry">
                         <Array as="points">
-                            <mxPoint x="825" y="200"/>
-                            <mxPoint x="303" y="200"/>
+                            <mxPoint x="825" y="170"/>
+                            <mxPoint x="303" y="170"/>
                         </Array>
                     </mxGeometry>
                 </mxCell>
-                <mxCell id="77" value="telemetry.events.dead" style="edgeLabel;html=1;align=center;verticalAlign=middle;resizable=0;points=[];" parent="76" vertex="1" connectable="0">
+                <mxCell id="77" value="&lt;span style=&quot;font-family: monospace; font-size: 0px; text-align: start; background-color: rgb(27, 29, 30);&quot;&gt;%3CmxGraphModel%3E%3Croot%3E%3CmxCell%20id%3D%220%22%2F%3E%3CmxCell%20id%3D%221%22%20parent%3D%220%22%2F%3E%3CmxCell%20id%3D%222%22%20value%3D%22%26lt%3Bspan%20style%3D%26quot%3Bcolor%3A%20rgb(67%2C%2057%2C%200)%3B%20font-family%3A%20Consolas%2C%20%26amp%3Bquot%3BCourier%20New%26amp%3Bquot%3B%2C%20monospace%3B%20font-size%3A%2010px%3B%20white-space-collapse%3A%20preserve%3B%20background-color%3A%20rgb(203%2C%20204%2C%20199)%3B%26quot%3B%26gt%3Btelemetry.events.dlq%26lt%3B%2Fspan%26gt%3B%22%20style%3D%22edgeLabel%3Bhtml%3D1%3Balign%3Dcenter%3BverticalAlign%3Dmiddle%3Bresizable%3D0%3Bpoints%3D%5B%5D%3B%22%20vertex%3D%221%22%20connectable%3D%220%22%20parent%3D%221%22%3E%3CmxGeometry%20x%3D%22378.71428571428567%22%20y%3D%22464%22%20as%3D%22geometry%22%2F%3E%3C%2FmxCell%3E%3C%2Froot%3E%3C%2FmxGraphModel%3E&lt;/span&gt;" style="edgeLabel;html=1;align=center;verticalAlign=middle;resizable=0;points=[];" parent="76" vertex="1" connectable="0">
                     <mxGeometry x="-0.0443" y="-1" relative="1" as="geometry">
                         <mxPoint as="offset"/>
                     </mxGeometry>
                 </mxCell>
                 <mxCell id="37" value="telemetry-processor-service" style="ellipse;whiteSpace=wrap;html=1;fillColor=#d5e8d4;gradientColor=#97d077;strokeColor=#82b366;" parent="1" vertex="1">
-                    <mxGeometry x="745" y="227" width="160" height="100" as="geometry"/>
-                </mxCell>
-                <mxCell id="38" value="Queues" style="text;html=1;align=center;verticalAlign=middle;whiteSpace=wrap;rounded=0;fontStyle=1" parent="1" vertex="1">
-                    <mxGeometry x="460" y="130" width="60" height="30" as="geometry"/>
+                    <mxGeometry x="745" y="200" width="160" height="100" as="geometry"/>
                 </mxCell>
                 <mxCell id="39" value="" style="group" parent="1" vertex="1" connectable="0">
-                    <mxGeometry x="520" y="340" width="130" height="94" as="geometry"/>
+                    <mxGeometry x="520" y="301" width="130" height="94" as="geometry"/>
                 </mxCell>
                 <mxCell id="40" value="" style="outlineConnect=0;dashed=0;verticalLabelPosition=bottom;verticalAlign=top;align=center;html=1;shape=mxgraph.aws3.queue;fillColor=#D9A741;gradientColor=none;" parent="39" vertex="1">
                     <mxGeometry y="28" width="130" height="66" as="geometry"/>
@@ -122,37 +89,42 @@
                 <mxCell id="41" value="telemetry.events.retry" style="text;html=1;align=center;verticalAlign=middle;whiteSpace=wrap;rounded=0;" parent="39" vertex="1">
                     <mxGeometry x="35" width="60" height="30" as="geometry"/>
                 </mxCell>
-                <mxCell id="42" style="edgeStyle=orthogonalEdgeStyle;html=1;exitX=0.687;exitY=1.003;exitDx=0;exitDy=0;exitPerimeter=0;" parent="1" source="26" target="40" edge="1">
+                <mxCell id="42" style="edgeStyle=orthogonalEdgeStyle;html=1;exitX=0.687;exitY=1.003;exitDx=0;exitDy=0;exitPerimeter=0;" parent="1" source="26" edge="1">
                     <mxGeometry relative="1" as="geometry">
-                        <mxPoint x="520" y="410" as="targetPoint"/>
+                        <mxPoint x="520" y="380" as="targetPoint"/>
                         <Array as="points">
                             <mxPoint x="329" y="320"/>
                             <mxPoint x="330" y="320"/>
-                            <mxPoint x="330" y="410"/>
+                            <mxPoint x="330" y="380"/>
                         </Array>
                     </mxGeometry>
                 </mxCell>
-                <mxCell id="43" value="&lt;div style=&quot;color: rgb(248, 248, 242); background-color: rgb(39, 40, 34); font-family: Consolas, &amp;quot;Courier New&amp;quot;, monospace; line-height: 19px; white-space-collapse: preserve;&quot;&gt;&lt;span style=&quot;color: #e6db74;&quot;&gt;TTL=10s&lt;/span&gt;&lt;/div&gt;" style="edgeLabel;html=1;align=center;verticalAlign=middle;resizable=0;points=[];fontSize=10;" parent="42" vertex="1" connectable="0">
+                <mxCell id="43" value="&lt;div style=&quot;color: rgb(248, 248, 242); background-color: rgb(39, 40, 34); font-family: Consolas, &amp;quot;Courier New&amp;quot;, monospace; line-height: 19px; white-space-collapse: preserve;&quot;&gt;&lt;br&gt;&lt;/div&gt;" style="edgeLabel;html=1;align=center;verticalAlign=middle;resizable=0;points=[];fontSize=10;" parent="42" vertex="1" connectable="0">
                     <mxGeometry x="0.1392" y="-5" relative="1" as="geometry">
                         <mxPoint as="offset"/>
                     </mxGeometry>
                 </mxCell>
-                <mxCell id="44" style="edgeStyle=orthogonalEdgeStyle;html=1;" parent="1" source="40" edge="1">
+                <mxCell id="90" value="&lt;span style=&quot;font-family: monospace; font-size: 0px; text-align: start; background-color: rgb(27, 29, 30);&quot;&gt;%3CmxGraphModel%3E%3Croot%3E%3CmxCell%20id%3D%220%22%2F%3E%3CmxCell%20id%3D%221%22%20parent%3D%220%22%2F%3E%3CmxCell%20id%3D%222%22%20value%3D%22%26lt%3Bspan%20style%3D%26quot%3Bcolor%3A%20rgb(67%2C%2057%2C%200)%3B%20font-family%3A%20Consolas%2C%20%26amp%3Bquot%3BCourier%20New%26amp%3Bquot%3B%2C%20monospace%3B%20font-size%3A%2010px%3B%20white-space-collapse%3A%20preserve%3B%20background-color%3A%20rgb(203%2C%20204%2C%20199)%3B%26quot%3B%26gt%3Btelemetry.events.dlq%26lt%3B%2Fspan%26gt%3B%22%20style%3D%22edgeLabel%3Bhtml%3D1%3Balign%3Dcenter%3BverticalAlign%3Dmiddle%3Bresizable%3D0%3Bpoints%3D%5B%5D%3B%22%20vertex%3D%221%22%20connectable%3D%220%22%20parent%3D%221%22%3E%3CmxGeometry%20x%3D%22378.71428571428567%22%20y%3D%22464%22%20as%3D%22geometry%22%2F%3E%3C%2FmxCell%3E%3C%2Froot%3E%3C%2FmxGraphModel%3E&lt;/span&gt;" style="edgeLabel;html=1;align=center;verticalAlign=middle;resizable=0;points=[];" parent="42" vertex="1" connectable="0">
+                    <mxGeometry x="0.1654" relative="1" as="geometry">
+                        <mxPoint as="offset"/>
+                    </mxGeometry>
+                </mxCell>
+                <mxCell id="44" style="edgeStyle=orthogonalEdgeStyle;html=1;entryX=0.75;entryY=1;entryDx=0;entryDy=0;" parent="1" source="40" target="26" edge="1">
                     <mxGeometry relative="1" as="geometry">
                         <Array as="points">
-                            <mxPoint x="338" y="380"/>
+                            <mxPoint x="338" y="340"/>
                         </Array>
                         <mxPoint x="520" y="391.0344827586207" as="sourcePoint"/>
                         <mxPoint x="338" y="310" as="targetPoint"/>
                     </mxGeometry>
                 </mxCell>
-                <mxCell id="45" value="&lt;div style=&quot;color: rgb(248, 248, 242); background-color: rgb(39, 40, 34); font-family: Consolas, &amp;quot;Courier New&amp;quot;, monospace; line-height: 19px; white-space-collapse: preserve;&quot;&gt;&lt;span style=&quot;color: rgb(230, 219, 116);&quot;&gt;telemetry.events&lt;/span&gt;&lt;/div&gt;" style="edgeLabel;html=1;align=center;verticalAlign=middle;resizable=0;points=[];fontSize=10;" parent="44" vertex="1" connectable="0">
+                <mxCell id="45" value="&lt;div style=&quot;color: rgb(248, 248, 242); background-color: rgb(39, 40, 34); font-family: Consolas, &amp;quot;Courier New&amp;quot;, monospace; line-height: 19px; white-space-collapse: preserve;&quot;&gt;&lt;br&gt;&lt;/div&gt;" style="edgeLabel;html=1;align=center;verticalAlign=middle;resizable=0;points=[];fontSize=10;" parent="44" vertex="1" connectable="0">
                     <mxGeometry x="-0.3493" y="-1" relative="1" as="geometry">
                         <mxPoint as="offset"/>
                     </mxGeometry>
                 </mxCell>
                 <mxCell id="46" value="" style="group;fontStyle=1" parent="1" vertex="1" connectable="0">
-                    <mxGeometry x="520" y="610" width="130" height="94" as="geometry"/>
+                    <mxGeometry x="520" y="540" width="130" height="94" as="geometry"/>
                 </mxCell>
                 <mxCell id="47" value="" style="outlineConnect=0;dashed=0;verticalLabelPosition=bottom;verticalAlign=top;align=center;html=1;shape=mxgraph.aws3.queue;fillColor=#D9A741;gradientColor=none;" parent="46" vertex="1">
                     <mxGeometry y="28" width="130" height="66" as="geometry"/>
@@ -161,24 +133,19 @@
                     <mxGeometry x="35" width="60" height="30" as="geometry"/>
                 </mxCell>
                 <mxCell id="58" value="telemetry.alerts.exchange" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#fff2cc;strokeColor=#d6b656;gradientColor=#ffd966;fontSize=11;" parent="1" vertex="1">
-                    <mxGeometry x="240" y="641" width="140" height="60" as="geometry"/>
+                    <mxGeometry x="233" y="571" width="140" height="60" as="geometry"/>
                 </mxCell>
                 <mxCell id="63" value="vehicle-telemetry-dashboard" style="ellipse;whiteSpace=wrap;html=1;fillColor=#d5e8d4;gradientColor=#97d077;strokeColor=#82b366;" parent="1" vertex="1">
-                    <mxGeometry x="745" y="621" width="160" height="100" as="geometry"/>
+                    <mxGeometry x="745" y="551" width="160" height="100" as="geometry"/>
                 </mxCell>
                 <mxCell id="65" style="edgeStyle=none;html=1;exitX=1;exitY=0.5;exitDx=0;exitDy=0;entryX=0;entryY=0.5;entryDx=0;entryDy=0;entryPerimeter=0;" parent="1" source="58" target="47" edge="1">
                     <mxGeometry relative="1" as="geometry"/>
-                </mxCell>
-                <mxCell id="71" value="&lt;span style=&quot;color: rgb(200, 192, 143); font-family: Consolas, &amp;quot;Courier New&amp;quot;, monospace; white-space-collapse: preserve; background-color: rgb(62, 63, 59);&quot;&gt;telemetry.events.alerts&lt;/span&gt;" style="edgeLabel;html=1;align=center;verticalAlign=middle;resizable=0;points=[];fontSize=10;" parent="65" vertex="1" connectable="0">
-                    <mxGeometry x="0.0219" y="-3" relative="1" as="geometry">
-                        <mxPoint as="offset"/>
-                    </mxGeometry>
                 </mxCell>
                 <mxCell id="66" style="edgeStyle=orthogonalEdgeStyle;html=1;exitX=1;exitY=0.5;exitDx=0;exitDy=0;exitPerimeter=0;entryX=0;entryY=0.5;entryDx=0;entryDy=0;" parent="1" source="47" target="63" edge="1">
                     <mxGeometry relative="1" as="geometry"/>
                 </mxCell>
                 <mxCell id="72" value="" style="group" parent="1" vertex="1" connectable="0">
-                    <mxGeometry x="520" y="480" width="130" height="94" as="geometry"/>
+                    <mxGeometry x="520" y="403" width="130" height="94" as="geometry"/>
                 </mxCell>
                 <mxCell id="73" value="" style="outlineConnect=0;dashed=0;verticalLabelPosition=bottom;verticalAlign=top;align=center;html=1;shape=mxgraph.aws3.queue;fillColor=#D9A741;gradientColor=none;" parent="72" vertex="1">
                     <mxGeometry y="28" width="130" height="66" as="geometry"/>
@@ -189,24 +156,40 @@
                 <mxCell id="80" style="edgeStyle=orthogonalEdgeStyle;html=1;entryX=0;entryY=0.5;entryDx=0;entryDy=0;entryPerimeter=0;exitX=0.5;exitY=1;exitDx=0;exitDy=0;" parent="1" source="58" target="33" edge="1">
                     <mxGeometry relative="1" as="geometry"/>
                 </mxCell>
-                <mxCell id="81" value="&lt;span style=&quot;color: rgb(67, 57, 0); font-family: Consolas, &amp;quot;Courier New&amp;quot;, monospace; white-space-collapse: preserve; background-color: rgb(203, 204, 199);&quot;&gt;telemetry.alerts&lt;/span&gt;" style="edgeLabel;html=1;align=center;verticalAlign=middle;resizable=0;points=[];fontSize=10;" parent="80" vertex="1" connectable="0">
-                    <mxGeometry x="0.1397" relative="1" as="geometry">
-                        <mxPoint as="offset"/>
-                    </mxGeometry>
-                </mxCell>
                 <mxCell id="82" style="edgeStyle=orthogonalEdgeStyle;html=1;exitX=0.25;exitY=1;exitDx=0;exitDy=0;entryX=0;entryY=0.5;entryDx=0;entryDy=0;entryPerimeter=0;" parent="1" source="26" target="73" edge="1">
                     <mxGeometry relative="1" as="geometry"/>
                 </mxCell>
-                <mxCell id="83" value="&lt;span style=&quot;color: rgb(67, 57, 0); font-family: Consolas, &amp;quot;Courier New&amp;quot;, monospace; font-size: 10px; white-space-collapse: preserve; background-color: rgb(203, 204, 199);&quot;&gt;telemetry.events.dead&lt;/span&gt;" style="edgeLabel;html=1;align=center;verticalAlign=middle;resizable=0;points=[];" parent="82" vertex="1" connectable="0">
+                <mxCell id="83" value="&lt;span style=&quot;color: rgb(67, 57, 0); font-family: Consolas, &amp;quot;Courier New&amp;quot;, monospace; font-size: 10px; white-space-collapse: preserve; background-color: rgb(203, 204, 199);&quot;&gt;telemetry.events.dlq&lt;/span&gt;" style="edgeLabel;html=1;align=center;verticalAlign=middle;resizable=0;points=[];" parent="82" vertex="1" connectable="0">
                     <mxGeometry x="0.3498" relative="1" as="geometry">
                         <mxPoint as="offset"/>
                     </mxGeometry>
                 </mxCell>
-                <mxCell id="85" value="telemetry-dql-service" style="ellipse;whiteSpace=wrap;html=1;fillColor=#d5e8d4;gradientColor=#97d077;strokeColor=#82b366;" vertex="1" parent="1">
-                    <mxGeometry x="745" y="491" width="160" height="100" as="geometry"/>
+                <mxCell id="85" value="telemetry-dql-service" style="ellipse;whiteSpace=wrap;html=1;fillColor=#d5e8d4;gradientColor=#97d077;strokeColor=#82b366;" parent="1" vertex="1">
+                    <mxGeometry x="745" y="414" width="160" height="100" as="geometry"/>
                 </mxCell>
-                <mxCell id="86" style="edgeStyle=none;html=1;" edge="1" parent="1" source="73" target="85">
+                <mxCell id="86" style="edgeStyle=none;html=1;" parent="1" source="73" target="85" edge="1">
                     <mxGeometry relative="1" as="geometry"/>
+                </mxCell>
+                <mxCell id="88" value="vehicle-telemetry-dashboard" style="ellipse;whiteSpace=wrap;html=1;fillColor=#d5e8d4;gradientColor=#97d077;strokeColor=#82b366;" parent="1" vertex="1">
+                    <mxGeometry x="745" y="662" width="160" height="100" as="geometry"/>
+                </mxCell>
+                <mxCell id="91" value="&lt;span style=&quot;color: rgb(67, 57, 0); font-family: Consolas, &amp;quot;Courier New&amp;quot;, monospace; font-size: 10px; white-space-collapse: preserve; background-color: rgb(203, 204, 199);&quot;&gt;TTL=10s&lt;/span&gt;" style="edgeLabel;html=1;align=center;verticalAlign=middle;resizable=0;points=[];" parent="1" vertex="1" connectable="0">
+                    <mxGeometry x="410.0042857142857" y="380" as="geometry"/>
+                </mxCell>
+                <mxCell id="93" value="&lt;span style=&quot;color: rgb(67, 57, 0); font-family: Consolas, &amp;quot;Courier New&amp;quot;, monospace; font-size: 10px; white-space-collapse: preserve; background-color: rgb(203, 204, 199);&quot;&gt;telemetry.events&lt;/span&gt;" style="edgeLabel;html=1;align=center;verticalAlign=middle;resizable=0;points=[];" parent="1" vertex="1" connectable="0">
+                    <mxGeometry x="425.0042857142857" y="340" as="geometry"/>
+                </mxCell>
+                <mxCell id="94" value="&lt;span style=&quot;color: rgb(67, 57, 0); font-family: Consolas, &amp;quot;Courier New&amp;quot;, monospace; font-size: 10px; white-space-collapse: preserve; background-color: rgb(203, 204, 199);&quot;&gt;telemetry.events&lt;/span&gt;" style="edgeLabel;html=1;align=center;verticalAlign=middle;resizable=0;points=[];" parent="1" vertex="1" connectable="0">
+                    <mxGeometry x="440.0042857142857" y="250" as="geometry"/>
+                </mxCell>
+                <mxCell id="95" value="&lt;span style=&quot;color: rgb(67, 57, 0); font-family: Consolas, &amp;quot;Courier New&amp;quot;, monospace; font-size: 10px; white-space-collapse: preserve; background-color: rgb(203, 204, 199);&quot;&gt;telemetry.events.dlq&lt;/span&gt;" style="edgeLabel;html=1;align=center;verticalAlign=middle;resizable=0;points=[];" parent="1" vertex="1" connectable="0">
+                    <mxGeometry x="530.0042857142856" y="170" as="geometry"/>
+                </mxCell>
+                <mxCell id="96" value="&lt;span style=&quot;color: rgb(67, 57, 0); font-family: Consolas, &amp;quot;Courier New&amp;quot;, monospace; font-size: 10px; white-space-collapse: preserve; background-color: rgb(203, 204, 199);&quot;&gt;telemetry.events.alerts&lt;/span&gt;" style="edgeLabel;html=1;align=center;verticalAlign=middle;resizable=0;points=[];" parent="1" vertex="1" connectable="0">
+                    <mxGeometry x="440.0042857142857" y="601" as="geometry"/>
+                </mxCell>
+                <mxCell id="98" value="&lt;span style=&quot;color: rgb(67, 57, 0); font-family: Consolas, &amp;quot;Courier New&amp;quot;, monospace; font-size: 10px; white-space-collapse: preserve; background-color: rgb(203, 204, 199);&quot;&gt;telemetry.events.dlq&lt;/span&gt;" style="edgeLabel;html=1;align=center;verticalAlign=middle;resizable=0;points=[];" parent="1" vertex="1" connectable="0">
+                    <mxGeometry x="400.0042857142857" y="712" as="geometry"/>
                 </mxCell>
             </root>
         </mxGraphModel>
