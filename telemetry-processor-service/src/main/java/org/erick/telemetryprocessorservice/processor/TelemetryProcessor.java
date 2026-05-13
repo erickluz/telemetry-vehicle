@@ -1,6 +1,8 @@
 package org.erick.telemetryprocessorservice.processor;
 
 import java.io.IOException;
+import java.io.PrintWriter;
+import java.io.StringWriter;
 import java.time.Instant;
 import java.util.List;
 import java.util.Map;
@@ -8,6 +10,7 @@ import java.util.Objects;
 
 import org.erick.shared.messaging.RabbitMQConstants;
 import org.erick.shared.model.AlertEvent;
+import org.erick.shared.model.TelemetryDlqMessage;
 import org.erick.shared.model.TelemetryEvent;
 import org.erick.telemetryprocessorservice.service.TelemetryService;
 import org.slf4j.Logger;
@@ -47,15 +50,41 @@ public class TelemetryProcessor {
         int retryCount = getRetryCount(message);
         LOGGER.info("Retry count for message: {}", retryCount);
         if (retryCount >= 3) {
-            rabbitTemplate.convertAndSend(
-                    RabbitMQConstants.Exchanges.TELEMETRY_EVENTS,
-                    RabbitMQConstants.RoutingKeys.TELEMETRY_EVENTS_DLQ,
-                    event);
+            enviarDLQ(event, e);
             confirmarMensagem(message, channel);
         } else {
             rejeitarMensagem(message, channel);
         }
         LOGGER.error("Erro ao processar mensagem", e);
+    }
+
+    private void enviarDLQ(TelemetryEvent event, Exception e) {
+        TelemetryDlqMessage dlqMessage = buildDlqMessage(event, e);
+        rabbitTemplate.convertAndSend(
+            RabbitMQConstants.Exchanges.TELEMETRY_EVENTS,
+            RabbitMQConstants.RoutingKeys.TELEMETRY_EVENTS_DLQ,
+            dlqMessage);
+        LOGGER.info("Enviando mensagem para DLQ: {}", dlqMessage);
+    }
+
+    private TelemetryDlqMessage buildDlqMessage(TelemetryEvent event, Exception e) {
+        TelemetryDlqMessage dlqMessage = new TelemetryDlqMessage();
+        dlqMessage.setTimestamp(Instant.now());
+        dlqMessage.setOriginalMessage(event);
+
+        if (e != null) {
+            dlqMessage.setExceptionClass(e.getClass().getName());
+            dlqMessage.setErrorMessage(e.getMessage());
+            dlqMessage.setStackTrace(getStackTrace(e));
+        }
+
+        return dlqMessage;
+    }
+
+    private String getStackTrace(Exception e) {
+        StringWriter stackTrace = new StringWriter();
+        e.printStackTrace(new PrintWriter(stackTrace));
+        return stackTrace.toString();
     }
 
     private void confirmarMensagem(Message message, Channel channel) throws IOException {
