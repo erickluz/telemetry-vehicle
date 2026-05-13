@@ -10,6 +10,7 @@ COMPOSE_FILE="${SCRIPT_DIR}/docker-compose.yml"
 SERVICES="
 vehicle-ingestion-service
 telemetry-processor-service
+telemetry-dlq-service
 notification-service
 vehicle-telemetry-dashboard
 "

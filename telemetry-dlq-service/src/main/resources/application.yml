@@ -1,0 +1,36 @@
+spring:
+  application:
+    name: telemetry-dlq-service
+  rabbitmq:
+    host: localhost
+    port: 5672
+    username: guest
+    password: guest
+  datasource:
+    url: jdbc:postgresql://localhost:5432/telemetry
+    username: telemetry
+    password: telemetry
+    driver-class-name: org.postgresql.Driver
+  jpa:
+    hibernate:
+      ddl-auto: update
+    show-sql: false
+
+server:
+  port: 8085
+
+springdoc:
+  api-docs:
+    path: /api-docs
+  swagger-ui:
+    path: /swagger-ui.html
+    operationsSorter: method
+    tagsSorter: alpha
+    displayOperationId: true
+  show-actuator: false
+
+openapi:
+  info:
+    title: Telemetry DLQ Service API
+    description: API para consultar, reprocessar e excluir mensagens da DLQ de telemetria
+    version: 1.0.0
