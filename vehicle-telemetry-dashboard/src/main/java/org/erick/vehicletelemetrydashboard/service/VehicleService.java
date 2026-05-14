@@ -55,6 +55,10 @@ public class VehicleService {
 
     @Transactional
     public void updateLatestTelemetry(String vehicleId, TelemetryEvent event) {
+        if (vehicleId == null || vehicleId.isBlank()) {
+            log.warn("Ignorando atualizacao de telemetria sem vehicleId: {}", event);
+            return;
+        }
         vehicleRepository.findById(vehicleId).ifPresent(vehicle -> {
             log.info("Atualizando telemetria do veiculo {} com os dados do evento {}", vehicleId, event);
             TelemetrySnapshotEmbeddable snapshot = vehicle.getLatestTelemetry();

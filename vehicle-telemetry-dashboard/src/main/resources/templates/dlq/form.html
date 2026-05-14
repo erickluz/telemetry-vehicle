@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html lang="pt-BR" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Editar mensagem DLQ</title>
+    <link rel="stylesheet" th:href="@{/css/app.css}">
+</head>
+<body>
+<div class="shell">
+    <aside class="sidebar">
+        <div>
+            <p class="eyebrow">Telemetry Operations</p>
+            <h1>Editar DLQ</h1>
+            <p class="sidebar-copy">Atualize os dados armazenados para permitir analise ou reprocessamento da mensagem corrigida.</p>
+        </div>
+        <nav class="menu">
+            <a class="menu-item" th:href="@{/dashboard}">Dashboard</a>
+            <a class="menu-item" th:href="@{/vehicles}">Veiculos</a>
+            <a class="menu-item active" th:href="@{/dlq}">DLQ</a>
+        </nav>
+    </aside>
+
+    <main class="content">
+        <section class="hero compact">
+            <div>
+                <p class="eyebrow" th:text="${'Mensagem #' + message.id}">Mensagem #1</p>
+                <h2>Editar mensagem da DLQ</h2>
+                <p class="hero-copy">Os timestamps devem ser informados em ISO-8601, por exemplo 2026-05-13T17:00:00Z.</p>
+            </div>
+            <a class="button secondary" th:href="@{/dlq}">Voltar para lista</a>
+        </section>
+
+        <div class="flash error" th:if="${errorMessage}" th:text="${errorMessage}">Erro.</div>
+
+        <section class="panel form-panel">
+            <form th:object="${message}" th:action="${formAction}" method="post" class="vehicle-form">
+                <input type="hidden" th:field="*{id}">
+
+                <div class="field-grid">
+                    <div class="field">
+                        <label for="dlqTimestamp">Timestamp da DLQ</label>
+                        <input id="dlqTimestamp" type="text" th:field="*{dlqTimestamp}">
+                    </div>
+                    <div class="field">
+                        <label for="exceptionClass">Classe da excecao</label>
+                        <input id="exceptionClass" type="text" th:field="*{exceptionClass}">
+                    </div>
+                    <div class="field">
+                        <label for="vehicleId">ID do veiculo</label>
+                        <input id="vehicleId" type="text" th:field="*{vehicleId}">
+                    </div>
+                    <div class="field">
+                        <label for="originalTimestamp">Timestamp original</label>
+                        <input id="originalTimestamp" type="text" th:field="*{originalTimestamp}">
+                    </div>
+                    <div class="field">
+                        <label for="latitude">Latitude</label>
+                        <input id="latitude" type="number" step="any" th:field="*{latitude}">
+                    </div>
+                    <div class="field">
+                        <label for="longitude">Longitude</label>
+                        <input id="longitude" type="number" step="any" th:field="*{longitude}">
+                    </div>
+                    <div class="field">
+                        <label for="speed">Velocidade</label>
+                        <input id="speed" type="number" step="any" th:field="*{speed}">
+                    </div>
+                    <div class="field">
+                        <label for="temperature">Temperatura</label>
+                        <input id="temperature" type="number" step="any" th:field="*{temperature}">
+                    </div>
+                    <div class="field">
+                        <label for="fuelLevel">Combustivel</label>
+                        <input id="fuelLevel" type="number" step="any" th:field="*{fuelLevel}">
+                    </div>
+                </div>
+
+                <div class="field">
+                    <label for="errorMessage">Mensagem de erro</label>
+                    <textarea id="errorMessage" rows="4" th:field="*{errorMessage}"></textarea>
+                </div>
+
+                <div class="field">
+                    <label for="stackTrace">Stacktrace</label>
+                    <textarea id="stackTrace" rows="12" th:field="*{stackTrace}"></textarea>
+                </div>
+
+                <div class="form-actions">
+                    <button class="button primary" type="submit">Salvar alteracoes</button>
+                    <a class="button secondary" th:href="@{/dlq}">Cancelar</a>
+                </div>
+            </form>
+        </section>
+    </main>
+</div>
+</body>
+</html>

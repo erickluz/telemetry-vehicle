@@ -44,7 +44,7 @@ public class VehicleController {
     }
 
     @GetMapping("/{id}/edit")
-    public String editVehicle(@PathVariable String id, Model model, RedirectAttributes redirectAttributes) {
+    public String editVehicle(@PathVariable("id") String id, Model model, RedirectAttributes redirectAttributes) {
         return vehicleService.findById(id)
                 .map(vehicle -> {
                     model.addAttribute("vehicle", vehicle);
@@ -89,7 +89,7 @@ public class VehicleController {
 
     @PostMapping("/{id}")
     public String update(
-            @PathVariable String id,
+            @PathVariable("id") String id,
             @Valid @ModelAttribute("vehicle") Vehicle vehicle,
             BindingResult bindingResult,
             Model model,
@@ -113,7 +113,7 @@ public class VehicleController {
     }
 
     @PostMapping("/{id}/delete")
-    public String delete(@PathVariable String id, RedirectAttributes redirectAttributes) {
+    public String delete(@PathVariable("id") String id, RedirectAttributes redirectAttributes) {
         vehicleService.deleteById(id);
         redirectAttributes.addFlashAttribute("successMessage", "Veiculo removido com sucesso.");
         return "redirect:/vehicles";

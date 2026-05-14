@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<html lang="pt-BR" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>DLQ</title>
+    <link rel="stylesheet" th:href="@{/css/app.css}">
+</head>
+<body>
+<div class="shell">
+    <aside class="sidebar">
+        <div>
+            <p class="eyebrow">Telemetry Operations</p>
+            <h1>DLQ</h1>
+            <p class="sidebar-copy">Mensagens rejeitadas pelo processamento de telemetria e gravadas pelo telemetry-dlq-service.</p>
+        </div>
+        <nav class="menu">
+            <a class="menu-item" th:href="@{/dashboard}">Dashboard</a>
+            <a class="menu-item" th:href="@{/vehicles}">Veiculos</a>
+            <a class="menu-item active" th:href="@{/dlq}">DLQ</a>
+        </nav>
+    </aside>
+
+    <main class="content">
+        <section class="hero compact">
+            <div>
+                <p class="eyebrow">telemetry.events.dlq</p>
+                <h2>Mensagens da DLQ</h2>
+                <p class="hero-copy">Consulte os erros capturados, envie a mensagem original para reprocessamento ou remova registros tratados.</p>
+            </div>
+            <a class="button secondary" th:href="@{/dlq}">Atualizar</a>
+        </section>
+
+        <div class="flash success" th:if="${successMessage}" th:text="${successMessage}">Operacao realizada.</div>
+        <div class="flash error" th:if="${errorMessage}" th:text="${errorMessage}">Erro.</div>
+
+        <section class="panel full-width">
+            <div class="panel-header">
+                <div>
+                    <p class="eyebrow">Registros</p>
+                    <h3>Mensagens armazenadas</h3>
+                </div>
+                <span th:text="${#lists.size(messages)} + ' mensagens'">0 mensagens</span>
+            </div>
+            <div class="table-wrap">
+                <table>
+                    <thead>
+                    <tr>
+                        <th>ID</th>
+                        <th>DLQ em</th>
+                        <th>Veiculo</th>
+                        <th>Evento original</th>
+                        <th>Erro</th>
+                        <th>Dados originais</th>
+                        <th>Acoes</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    <tr th:if="${#lists.isEmpty(messages)}">
+                        <td colspan="7">Nenhuma mensagem da DLQ armazenada.</td>
+                    </tr>
+                    <tr th:each="message : ${messages}">
+                        <td th:text="${message.id}">1</td>
+                        <td th:text="${message.dlqTimestamp != null ? #temporals.format(message.dlqTimestamp, 'dd/MM/yyyy HH:mm:ss') : '-'}">13/05/2026 17:00:00</td>
+                        <td th:text="${message.vehicleId != null ? message.vehicleId : '-'}">VH-001</td>
+                        <td th:text="${message.originalTimestamp != null ? #temporals.format(message.originalTimestamp, 'dd/MM/yyyy HH:mm:ss') : '-'}">13/05/2026 17:00:00</td>
+                        <td class="error-cell">
+                            <strong th:text="${message.exceptionClass != null ? message.exceptionClass : '-'}">java.lang.IllegalArgumentException</strong>
+                            <span th:text="${message.errorMessage != null ? message.errorMessage : '-'}">Mensagem do erro</span>
+                            <details th:if="${message.stackTrace != null}">
+                                <summary>Stacktrace</summary>
+                                <pre th:text="${message.stackTrace}">stacktrace</pre>
+                            </details>
+                        </td>
+                        <td>
+                            <dl class="metric-list">
+                                <div>
+                                    <dt>Velocidade</dt>
+                                    <dd th:text="${message.speed != null ? #numbers.formatDecimal(message.speed, 1, 1) + ' km/h' : '-'}">0.0 km/h</dd>
+                                </div>
+                                <div>
+                                    <dt>Temperatura</dt>
+                                    <dd th:text="${message.temperature != null ? #numbers.formatDecimal(message.temperature, 1, 1) + ' C' : '-'}">0.0 C</dd>
+                                </div>
+                                <div>
+                                    <dt>Combustivel</dt>
+                                    <dd th:text="${message.fuelLevel != null ? #numbers.formatDecimal(message.fuelLevel, 1, 1) + '%' : '-'}">0.0%</dd>
+                                </div>
+                                <div>
+                                    <dt>Localizacao</dt>
+                                    <dd th:text="${message.latitude != null && message.longitude != null ? #numbers.formatDecimal(message.latitude, 1, 5) + ', ' + #numbers.formatDecimal(message.longitude, 1, 5) : '-'}">-</dd>
+                                </div>
+                            </dl>
+                        </td>
+                        <td class="actions">
+                            <a class="button secondary" th:href="@{|/dlq/${message.id}/edit|}">Editar</a>
+                            <form th:action="@{|/dlq/${message.id}/reprocess|}" method="post">
+                                <button class="button primary" type="submit">Reprocessar</button>
+                            </form>
+                            <form th:action="@{|/dlq/${message.id}/delete|}" method="post">
+                                <button class="button danger" type="submit">Excluir</button>
+                            </form>
+                        </td>
+                    </tr>
+                    </tbody>
+                </table>
+            </div>
+        </section>
+    </main>
+</div>
+</body>
+</html>

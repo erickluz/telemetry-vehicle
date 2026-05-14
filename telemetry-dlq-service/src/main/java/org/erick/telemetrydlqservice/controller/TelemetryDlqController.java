@@ -12,6 +12,8 @@ import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -49,6 +51,42 @@ public class TelemetryDlqController {
         return ResponseEntity.ok(telemetryDlqService.findAll());
     }
 
+    @GetMapping("/{id}")
+    @Operation(
+            summary = "Buscar mensagem da DLQ por ID",
+            description = "Consulta uma mensagem consumida da DLQ e armazenada no banco pelo ID informado")
+    @ApiResponses(value = {
+        @ApiResponse(
+                responseCode = "200",
+                description = "Mensagem encontrada",
+                content = @Content(
+                        mediaType = "application/json",
+                        schema = @Schema(implementation = TelemetryDlqRecord.class))),
+        @ApiResponse(responseCode = "404", description = "Mensagem da DLQ nao encontrada", content = @Content)
+    })
+    public ResponseEntity<TelemetryDlqRecord> findById(@PathVariable("id") Long id) {
+        return ResponseEntity.ok(telemetryDlqService.findById(id));
+    }
+
+    @PutMapping("/{id}")
+    @Operation(
+            summary = "Editar mensagem da DLQ",
+            description = "Atualiza os dados da mensagem da DLQ armazenada no banco pelo ID informado")
+    @ApiResponses(value = {
+        @ApiResponse(
+                responseCode = "200",
+                description = "Mensagem atualizada",
+                content = @Content(
+                        mediaType = "application/json",
+                        schema = @Schema(implementation = TelemetryDlqRecord.class))),
+        @ApiResponse(responseCode = "404", description = "Mensagem da DLQ nao encontrada", content = @Content)
+    })
+    public ResponseEntity<TelemetryDlqRecord> update(
+            @PathVariable("id") Long id,
+            @RequestBody TelemetryDlqRecord updatedRecord) {
+        return ResponseEntity.ok(telemetryDlqService.update(id, updatedRecord));
+    }
+
     @PostMapping("/{id}/reprocess")
     @Operation(
             summary = "Reprocessar mensagem da DLQ",
@@ -57,7 +95,7 @@ public class TelemetryDlqController {
         @ApiResponse(responseCode = "202", description = "Mensagem enviada para reprocessamento"),
         @ApiResponse(responseCode = "404", description = "Mensagem da DLQ nao encontrada", content = @Content)
     })
-    public ResponseEntity<Void> reprocess(@PathVariable Long id) {
+    public ResponseEntity<Void> reprocess(@PathVariable("id") Long id) {
         telemetryDlqService.reprocess(id);
         return ResponseEntity.accepted().build();
     }
@@ -70,7 +108,7 @@ public class TelemetryDlqController {
         @ApiResponse(responseCode = "204", description = "Mensagem excluida"),
         @ApiResponse(responseCode = "404", description = "Mensagem da DLQ nao encontrada", content = @Content)
     })
-    public ResponseEntity<Void> delete(@PathVariable Long id) {
+    public ResponseEntity<Void> delete(@PathVariable("id") Long id) {
         telemetryDlqService.delete(id);
         return ResponseEntity.noContent().build();
     }

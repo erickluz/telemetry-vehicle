@@ -47,6 +47,27 @@ public class TelemetryDlqService {
         return repository.findAll();
     }
 
+    public TelemetryDlqRecord findById(Long id) {
+        return repository.findById(id)
+                .orElseThrow(() -> new NoSuchElementException("Mensagem da DLQ nao encontrada: " + id));
+    }
+
+    public TelemetryDlqRecord update(Long id, TelemetryDlqRecord updatedRecord) {
+        TelemetryDlqRecord record = findById(id);
+        record.setDlqTimestamp(updatedRecord.getDlqTimestamp());
+        record.setExceptionClass(updatedRecord.getExceptionClass());
+        record.setErrorMessage(updatedRecord.getErrorMessage());
+        record.setStackTrace(updatedRecord.getStackTrace());
+        record.setVehicleId(updatedRecord.getVehicleId());
+        record.setOriginalTimestamp(updatedRecord.getOriginalTimestamp());
+        record.setLatitude(updatedRecord.getLatitude());
+        record.setLongitude(updatedRecord.getLongitude());
+        record.setSpeed(updatedRecord.getSpeed());
+        record.setTemperature(updatedRecord.getTemperature());
+        record.setFuelLevel(updatedRecord.getFuelLevel());
+        return repository.save(record);
+    }
+
     public void reprocess(Long id) {
         TelemetryDlqRecord record = findById(id);
         TelemetryEvent event = toTelemetryEvent(record);
@@ -62,11 +83,6 @@ public class TelemetryDlqService {
             throw new NoSuchElementException("Mensagem da DLQ nao encontrada: " + id);
         }
         repository.deleteById(id);
-    }
-
-    private TelemetryDlqRecord findById(Long id) {
-        return repository.findById(id)
-                .orElseThrow(() -> new NoSuchElementException("Mensagem da DLQ nao encontrada: " + id));
     }
 
     private TelemetryEvent toTelemetryEvent(TelemetryDlqRecord record) {

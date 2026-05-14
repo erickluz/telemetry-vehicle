@@ -265,6 +265,67 @@ th {
     gap: 10px;
 }
 
+.error-cell {
+    min-width: 320px;
+}
+
+.error-cell strong,
+.error-cell span {
+    display: block;
+}
+
+.error-cell span {
+    margin-top: 6px;
+    color: var(--muted);
+}
+
+details {
+    margin-top: 10px;
+}
+
+summary {
+    cursor: pointer;
+    color: var(--accent-dark);
+    font-weight: 600;
+}
+
+pre {
+    max-width: 520px;
+    max-height: 220px;
+    overflow: auto;
+    margin: 10px 0 0;
+    padding: 12px;
+    border-radius: 12px;
+    background: #241a12;
+    color: #fff8f0;
+    font-size: 0.82rem;
+    line-height: 1.5;
+    white-space: pre-wrap;
+}
+
+.metric-list {
+    min-width: 220px;
+    display: grid;
+    gap: 8px;
+    margin: 0;
+}
+
+.metric-list div {
+    display: flex;
+    justify-content: space-between;
+    gap: 12px;
+}
+
+.metric-list dt {
+    color: var(--muted);
+}
+
+.metric-list dd {
+    margin: 0;
+    font-weight: 600;
+    text-align: right;
+}
+
 .badge {
     display: inline-flex;
     align-items: center;
@@ -310,13 +371,19 @@ th {
 }
 
 .field input,
-.field select {
+.field select,
+.field textarea {
     padding: 12px 14px;
     border: 1px solid var(--line);
     border-radius: 14px;
     background: #fffdf9;
     font: inherit;
     color: var(--text);
+}
+
+.field textarea {
+    min-height: 120px;
+    resize: vertical;
 }
 
 .field-error {
