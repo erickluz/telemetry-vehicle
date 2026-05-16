@@ -39,8 +39,20 @@
 
                 <div class="field-grid">
                     <div class="field">
+                        <label for="status">Status</label>
+                        <select id="status" th:field="*{status}">
+                            <option th:each="statusOption : ${statuses}"
+                                    th:value="${statusOption}"
+                                    th:text="${statusOption.label}">Pendente</option>
+                        </select>
+                    </div>
+                    <div class="field">
                         <label for="dlqTimestamp">Timestamp da DLQ</label>
                         <input id="dlqTimestamp" type="text" th:field="*{dlqTimestamp}">
+                    </div>
+                    <div class="field">
+                        <label for="reprocessCount">Reprocessamentos</label>
+                        <input id="reprocessCount" type="number" th:field="*{reprocessCount}" readonly>
                     </div>
                     <div class="field">
                         <label for="exceptionClass">Classe da excecao</label>

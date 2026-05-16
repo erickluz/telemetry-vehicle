@@ -35,4 +35,14 @@ public final class RabbitMQConstants {
         private RoutingKeys() {
         }
     }
+
+    public static final class Headers {
+        public static final String REPROCESSED = "x-reprocessed";
+        public static final String REPROCESS_SOURCE = "x-reprocess-source";
+        public static final String DLQ_RECORD_ID = "x-dlq-record-id";
+        public static final String REPROCESS_COUNT = "x-reprocess-count";
+
+        private Headers() {
+        }
+    }
 }

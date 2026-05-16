@@ -3,6 +3,7 @@ package org.erick.telemetrydlqservice.controller;
 import java.util.List;
 import java.util.NoSuchElementException;
 
+import org.erick.shared.model.TelemetryDlqStatus;
 import org.erick.telemetrydlqservice.model.TelemetryDlqRecord;
 import org.erick.telemetrydlqservice.service.TelemetryDlqService;
 import org.springframework.http.HttpStatus;
@@ -15,6 +16,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import io.swagger.v3.oas.annotations.Operation;
@@ -47,8 +49,9 @@ public class TelemetryDlqController {
                         mediaType = "application/json",
                         schema = @Schema(implementation = TelemetryDlqRecord.class)))
     })
-    public ResponseEntity<List<TelemetryDlqRecord>> list() {
-        return ResponseEntity.ok(telemetryDlqService.findAll());
+    public ResponseEntity<List<TelemetryDlqRecord>> list(
+            @RequestParam(value = "status", required = false) TelemetryDlqStatus status) {
+        return ResponseEntity.ok(telemetryDlqService.findAll(status));
     }
 
     @GetMapping("/{id}")
@@ -98,6 +101,25 @@ public class TelemetryDlqController {
     public ResponseEntity<Void> reprocess(@PathVariable("id") Long id) {
         telemetryDlqService.reprocess(id);
         return ResponseEntity.accepted().build();
+    }
+
+    @PostMapping("/{id}/status")
+    @Operation(
+            summary = "Atualizar status da mensagem da DLQ",
+            description = "Atualiza o status operacional da mensagem armazenada na DLQ")
+    @ApiResponses(value = {
+        @ApiResponse(
+                responseCode = "200",
+                description = "Status atualizado",
+                content = @Content(
+                        mediaType = "application/json",
+                        schema = @Schema(implementation = TelemetryDlqRecord.class))),
+        @ApiResponse(responseCode = "404", description = "Mensagem da DLQ nao encontrada", content = @Content)
+    })
+    public ResponseEntity<TelemetryDlqRecord> updateStatus(
+            @PathVariable("id") Long id,
+            @RequestParam("status") TelemetryDlqStatus status) {
+        return ResponseEntity.ok(telemetryDlqService.updateStatus(id, status));
     }
 
     @DeleteMapping("/{id}")

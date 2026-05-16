@@ -2,6 +2,7 @@ package org.erick.vehicletelemetrydashboard.service;
 
 import java.util.List;
 
+import org.erick.shared.model.TelemetryDlqStatus;
 import org.erick.vehicletelemetrydashboard.model.TelemetryDlqRecordView;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.ParameterizedTypeReference;
@@ -19,9 +20,15 @@ public class TelemetryDlqClient {
         this.restClient = restClientBuilder.baseUrl(baseUrl).build();
     }
 
-    public List<TelemetryDlqRecordView> findAll() {
+    public List<TelemetryDlqRecordView> findAll(TelemetryDlqStatus status) {
         return restClient.get()
-                .uri("/api/dlq/messages")
+                .uri(uriBuilder -> {
+                    uriBuilder.path("/api/dlq/messages");
+                    if (status != null) {
+                        uriBuilder.queryParam("status", status);
+                    }
+                    return uriBuilder.build();
+                })
                 .retrieve()
                 .body(new ParameterizedTypeReference<List<TelemetryDlqRecordView>>() {
                 });
@@ -47,6 +54,16 @@ public class TelemetryDlqClient {
                 .uri("/api/dlq/messages/{id}/reprocess", id)
                 .retrieve()
                 .toBodilessEntity();
+    }
+
+    public TelemetryDlqRecordView updateStatus(Long id, TelemetryDlqStatus status) {
+        return restClient.post()
+                .uri(uriBuilder -> uriBuilder
+                        .path("/api/dlq/messages/{id}/status")
+                        .queryParam("status", status)
+                        .build(id))
+                .retrieve()
+                .body(TelemetryDlqRecordView.class);
     }
 
     public void delete(Long id) {

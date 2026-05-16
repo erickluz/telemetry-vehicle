@@ -334,6 +334,53 @@ pre {
     background: #ede2d1;
 }
 
+.status-badge {
+    min-width: 132px;
+    justify-content: center;
+    font-weight: 700;
+}
+
+.status-pendente {
+    background: #fff1cf;
+    color: #785316;
+}
+
+.status-reprocessando {
+    background: #dfeeff;
+    color: #245c90;
+}
+
+.status-reprocessado {
+    background: #def1e3;
+    color: var(--success);
+}
+
+.status-falha_no_reprocessamento {
+    background: #f5dfdf;
+    color: var(--danger);
+}
+
+.status-ignorado {
+    background: #e8e2db;
+    color: #5d534a;
+}
+
+.status-arquivado {
+    background: #e4e7ef;
+    color: #3d4961;
+}
+
+.filter-bar {
+    display: flex;
+    align-items: flex-end;
+    gap: 12px;
+    margin-bottom: 18px;
+}
+
+.compact-field {
+    min-width: 240px;
+}
+
 .flash {
     padding: 14px 18px;
 }
@@ -424,7 +471,8 @@ pre {
     .panel-header,
     .stream-card-header,
     .actions,
-    .form-actions {
+    .form-actions,
+    .filter-bar {
         flex-direction: column;
         align-items: flex-start;
     }

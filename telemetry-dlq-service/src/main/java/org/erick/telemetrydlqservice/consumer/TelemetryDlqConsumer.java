@@ -6,6 +6,7 @@ import org.erick.telemetrydlqservice.model.TelemetryDlqRecord;
 import org.erick.telemetrydlqservice.service.TelemetryDlqService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.amqp.core.Message;
 import org.springframework.amqp.rabbit.annotation.RabbitListener;
 import org.springframework.stereotype.Component;
 
@@ -21,8 +22,8 @@ public class TelemetryDlqConsumer {
     }
 
     @RabbitListener(queues = RabbitMQConstants.Queues.TELEMETRY_EVENTS_DLQ)
-    public void receive(TelemetryDlqMessage message) {
-        TelemetryDlqRecord record = telemetryDlqService.save(message);
+    public void receive(TelemetryDlqMessage message, Message amqpMessage) {
+        TelemetryDlqRecord record = telemetryDlqService.save(message, amqpMessage);
         LOGGER.info("Mensagem da DLQ armazenada com id {}", record.getId());
     }
 }

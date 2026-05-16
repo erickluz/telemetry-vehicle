@@ -2,9 +2,12 @@ package org.erick.vehicletelemetrydashboard.model;
 
 import java.time.Instant;
 
+import org.erick.shared.model.TelemetryDlqStatus;
+
 public class TelemetryDlqRecordView {
 
     private Long id;
+    private TelemetryDlqStatus status;
     private Instant dlqTimestamp;
     private String exceptionClass;
     private String errorMessage;
@@ -16,6 +19,7 @@ public class TelemetryDlqRecordView {
     private Double speed;
     private Double temperature;
     private Double fuelLevel;
+    private Integer reprocessCount;
 
     public Long getId() {
         return id;
@@ -23,6 +27,18 @@ public class TelemetryDlqRecordView {
 
     public void setId(Long id) {
         this.id = id;
+    }
+
+    public TelemetryDlqStatus getStatus() {
+        return status;
+    }
+
+    public void setStatus(TelemetryDlqStatus status) {
+        this.status = status;
+    }
+
+    public String getStatusLabel() {
+        return status == null ? TelemetryDlqStatus.PENDENTE.getLabel() : status.getLabel();
     }
 
     public Instant getDlqTimestamp() {
@@ -111,5 +127,13 @@ public class TelemetryDlqRecordView {
 
     public void setFuelLevel(Double fuelLevel) {
         this.fuelLevel = fuelLevel;
+    }
+
+    public Integer getReprocessCount() {
+        return reprocessCount;
+    }
+
+    public void setReprocessCount(Integer reprocessCount) {
+        this.reprocessCount = reprocessCount;
     }
 }

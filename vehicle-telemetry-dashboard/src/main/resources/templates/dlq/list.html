@@ -26,7 +26,7 @@
             <div>
                 <p class="eyebrow">telemetry.events.dlq</p>
                 <h2>Mensagens da DLQ</h2>
-                <p class="hero-copy">Consulte os erros capturados, envie a mensagem original para reprocessamento ou remova registros tratados.</p>
+                <p class="hero-copy">Consulte os erros capturados, envie a mensagem original para reprocessamento ou atualize o status operacional.</p>
             </div>
             <a class="button secondary" th:href="@{/dlq}">Atualizar</a>
         </section>
@@ -42,11 +42,27 @@
                 </div>
                 <span th:text="${#lists.size(messages)} + ' mensagens'">0 mensagens</span>
             </div>
+            <form class="filter-bar" th:action="@{/dlq}" method="get">
+                <div class="field compact-field">
+                    <label for="status">Status</label>
+                    <select id="status" name="status">
+                        <option value="" th:selected="${selectedStatus == null}">Todos</option>
+                        <option th:each="statusOption : ${statuses}"
+                                th:value="${statusOption}"
+                                th:text="${statusOption.label}"
+                                th:selected="${statusOption == selectedStatus}">Pendente</option>
+                    </select>
+                </div>
+                <button class="button primary" type="submit">Filtrar</button>
+                <a class="button secondary" th:href="@{/dlq}">Limpar</a>
+            </form>
             <div class="table-wrap">
                 <table>
                     <thead>
                     <tr>
                         <th>ID</th>
+                        <th>Status</th>
+                        <th>Reprocess.</th>
                         <th>DLQ em</th>
                         <th>Veiculo</th>
                         <th>Evento original</th>
@@ -57,10 +73,16 @@
                     </thead>
                     <tbody>
                     <tr th:if="${#lists.isEmpty(messages)}">
-                        <td colspan="7">Nenhuma mensagem da DLQ armazenada.</td>
+                        <td colspan="9">Nenhuma mensagem da DLQ armazenada.</td>
                     </tr>
                     <tr th:each="message : ${messages}">
                         <td th:text="${message.id}">1</td>
+                        <td>
+                            <span class="badge status-badge"
+                                  th:classappend="${message.status != null ? ' status-' + message.status.name().toLowerCase() : ' status-pendente'}"
+                                  th:text="${message.statusLabel}">Pendente</span>
+                        </td>
+                        <td th:text="${message.reprocessCount != null ? message.reprocessCount : 0}">0</td>
                         <td th:text="${message.dlqTimestamp != null ? #temporals.format(message.dlqTimestamp, 'dd/MM/yyyy HH:mm:ss') : '-'}">13/05/2026 17:00:00</td>
                         <td th:text="${message.vehicleId != null ? message.vehicleId : '-'}">VH-001</td>
                         <td th:text="${message.originalTimestamp != null ? #temporals.format(message.originalTimestamp, 'dd/MM/yyyy HH:mm:ss') : '-'}">13/05/2026 17:00:00</td>
@@ -96,6 +118,12 @@
                             <a class="button secondary" th:href="@{|/dlq/${message.id}/edit|}">Editar</a>
                             <form th:action="@{|/dlq/${message.id}/reprocess|}" method="post">
                                 <button class="button primary" type="submit">Reprocessar</button>
+                            </form>
+                            <form th:action="@{|/dlq/${message.id}/ignore|}" method="post">
+                                <button class="button secondary" type="submit">Ignorar</button>
+                            </form>
+                            <form th:action="@{|/dlq/${message.id}/archive|}" method="post">
+                                <button class="button secondary" type="submit">Arquivar</button>
                             </form>
                             <form th:action="@{|/dlq/${message.id}/delete|}" method="post">
                                 <button class="button danger" type="submit">Excluir</button>

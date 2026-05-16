@@ -4,11 +4,15 @@ import java.time.Instant;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
+import jakarta.persistence.EnumType;
+import jakarta.persistence.Enumerated;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
-import jakarta.persistence.Lob;
+import jakarta.persistence.PrePersist;
 import jakarta.persistence.Table;
+
+import org.erick.shared.model.TelemetryDlqStatus;
 
 @Entity
 @Table(name = "telemetry_dlq_records")
@@ -18,13 +22,15 @@ public class TelemetryDlqRecord {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
+    @Enumerated(EnumType.STRING)
+    private TelemetryDlqStatus status = TelemetryDlqStatus.PENDENTE;
+
     private Instant dlqTimestamp;
     private String exceptionClass;
 
     @Column(length = 2000)
     private String errorMessage;
 
-    @Lob
     @Column(columnDefinition = "TEXT")
     private String stackTrace;
 
@@ -35,6 +41,14 @@ public class TelemetryDlqRecord {
     private Double speed;
     private Double temperature;
     private Double fuelLevel;
+    private Integer reprocessCount = 0;
+
+    @PrePersist
+    void prePersist() {
+        if (status == null) {
+            status = TelemetryDlqStatus.PENDENTE;
+        }
+    }
 
     public Long getId() {
         return id;
@@ -42,6 +56,14 @@ public class TelemetryDlqRecord {
 
     public void setId(Long id) {
         this.id = id;
+    }
+
+    public TelemetryDlqStatus getStatus() {
+        return status;
+    }
+
+    public void setStatus(TelemetryDlqStatus status) {
+        this.status = status;
     }
 
     public Instant getDlqTimestamp() {
@@ -130,5 +152,13 @@ public class TelemetryDlqRecord {
 
     public void setFuelLevel(Double fuelLevel) {
         this.fuelLevel = fuelLevel;
+    }
+
+    public Integer getReprocessCount() {
+        return reprocessCount;
+    }
+
+    public void setReprocessCount(Integer reprocessCount) {
+        this.reprocessCount = reprocessCount;
     }
 }

@@ -12,6 +12,7 @@ import org.erick.shared.messaging.RabbitMQConstants;
 import org.erick.shared.model.AlertEvent;
 import org.erick.shared.model.TelemetryDlqMessage;
 import org.erick.shared.model.TelemetryEvent;
+import org.erick.telemetryprocessorservice.service.TelemetryDlqStatusClient;
 import org.erick.telemetryprocessorservice.service.TelemetryService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -30,9 +31,11 @@ public class TelemetryProcessor {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(TelemetryProcessor.class);
     private final RabbitTemplate rabbitTemplate;
+    private final TelemetryDlqStatusClient telemetryDlqStatusClient;
 
-    public TelemetryProcessor(RabbitTemplate rabbitTemplate) {
+    public TelemetryProcessor(RabbitTemplate rabbitTemplate, TelemetryDlqStatusClient telemetryDlqStatusClient) {
         this.rabbitTemplate = rabbitTemplate;
+        this.telemetryDlqStatusClient = telemetryDlqStatusClient;
     }
 
     @RabbitListener(queues = RabbitMQConstants.Queues.TELEMETRY_EVENTS)
@@ -40,6 +43,7 @@ public class TelemetryProcessor {
         LOGGER.info("Received telemetry event for vehicle {}", event.getVehicleId());
         try {
             processaEvento(event);
+            telemetryDlqStatusClient.markReprocessed(getLongHeader(message, RabbitMQConstants.Headers.DLQ_RECORD_ID));
             confirmarMensagem(message, channel);
         } catch (Exception e) {
             tratarRetryDLQ(event, message, channel, e);
@@ -50,7 +54,7 @@ public class TelemetryProcessor {
         int retryCount = getRetryCount(message);
         LOGGER.info("Retry count for message: {}", retryCount);
         if (retryCount >= 3) {
-            enviarDLQ(event, e);
+            enviarDLQ(event, message, e);
             confirmarMensagem(message, channel);
         } else {
             rejeitarMensagem(message, channel);
@@ -58,12 +62,19 @@ public class TelemetryProcessor {
         LOGGER.error("Erro ao processar mensagem", e);
     }
 
-    private void enviarDLQ(TelemetryEvent event, Exception e) {
+    private void enviarDLQ(TelemetryEvent event, Message originalAmqpMessage, Exception e) {
         TelemetryDlqMessage dlqMessage = buildDlqMessage(event, e);
         rabbitTemplate.convertAndSend(
             RabbitMQConstants.Exchanges.TELEMETRY_EVENTS,
             RabbitMQConstants.RoutingKeys.TELEMETRY_EVENTS_DLQ,
-            dlqMessage);
+            dlqMessage,
+            message -> {
+                copyHeader(originalAmqpMessage, message, RabbitMQConstants.Headers.REPROCESSED);
+                copyHeader(originalAmqpMessage, message, RabbitMQConstants.Headers.REPROCESS_SOURCE);
+                copyHeader(originalAmqpMessage, message, RabbitMQConstants.Headers.DLQ_RECORD_ID);
+                copyHeader(originalAmqpMessage, message, RabbitMQConstants.Headers.REPROCESS_COUNT);
+                return message;
+            });
         LOGGER.info("Enviando mensagem para DLQ: {}", dlqMessage);
     }
 
@@ -97,6 +108,31 @@ public class TelemetryProcessor {
         long deliveryTag = message.getMessageProperties().getDeliveryTag();
         LOGGER.info("Rejeitando mensagem com deliveryTag: {}", deliveryTag);
         channel.basicNack(deliveryTag, false, false);
+    }
+
+    private void copyHeader(Message source, Message target, String headerName) {
+        Object value = source.getMessageProperties().getHeaders().get(headerName);
+        if (value != null) {
+            target.getMessageProperties().setHeader(headerName, value);
+        }
+    }
+
+    private Long getLongHeader(Message message, String headerName) {
+        Object value = message.getMessageProperties().getHeaders().get(headerName);
+        if (value instanceof Long longValue) {
+            return longValue;
+        }
+        if (value instanceof Integer integerValue) {
+            return integerValue.longValue();
+        }
+        if (value instanceof String stringValue && !stringValue.isBlank()) {
+            try {
+                return Long.parseLong(stringValue);
+            } catch (NumberFormatException ex) {
+                return null;
+            }
+        }
+        return null;
     }
 
     @SuppressWarnings("unchecked")
