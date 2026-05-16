@@ -14,33 +14,50 @@ import jakarta.persistence.Table;
 
 import org.erick.shared.model.TelemetryDlqStatus;
 
+import io.swagger.v3.oas.annotations.media.Schema;
+
 @Entity
 @Table(name = "telemetry_dlq_records")
+@Schema(description = "Persisted representation of a telemetry message that reached the dead-letter queue.")
 public class TelemetryDlqRecord {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Schema(description = "Database identifier of the DLQ record.", example = "42")
     private Long id;
 
     @Enumerated(EnumType.STRING)
+    @Schema(description = "Operational status assigned to this DLQ record.", example = "PENDENTE")
     private TelemetryDlqStatus status = TelemetryDlqStatus.PENDENTE;
 
+    @Schema(description = "Timestamp when the DLQ service persisted the failed message.", example = "2026-05-16T10:00:00Z")
     private Instant dlqTimestamp;
+    @Schema(description = "Java exception class captured from the failed processing attempt.", example = "java.lang.IllegalArgumentException")
     private String exceptionClass;
 
     @Column(length = 2000)
+    @Schema(description = "Failure message captured from the processing exception.", example = "Timestamp do evento e invalido")
     private String errorMessage;
 
     @Column(columnDefinition = "TEXT")
+    @Schema(description = "Stack trace captured from the processing exception.")
     private String stackTrace;
 
+    @Schema(description = "Original telemetry vehicle identifier.", example = "VH-DLQ-000123")
     private String vehicleId;
+    @Schema(description = "Original telemetry event timestamp.", example = "2026-05-16T10:00:00Z")
     private Instant originalTimestamp;
+    @Schema(description = "Original telemetry latitude.", example = "-23.106")
     private Double latitude;
+    @Schema(description = "Original telemetry longitude.", example = "-49.805")
     private Double longitude;
+    @Schema(description = "Original telemetry speed.", example = "80.0")
     private Double speed;
+    @Schema(description = "Original telemetry temperature.", example = "85.0")
     private Double temperature;
+    @Schema(description = "Original telemetry fuel level.", example = "70.0")
     private Double fuelLevel;
+    @Schema(description = "Number of reprocess attempts requested from the DLQ API.", example = "1")
     private Integer reprocessCount = 0;
 
     @PrePersist
