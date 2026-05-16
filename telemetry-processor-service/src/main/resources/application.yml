@@ -22,6 +22,23 @@ spring:
 server:
   port: 8082
 
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health,info,metrics,prometheus
+  endpoint:
+    health:
+      show-details: always
+  metrics:
+    tags:
+      application: telemetry-processor-service
+
+info:
+  app:
+    name: telemetry-processor-service
+    description: Consumes telemetry events, processes them, persists data and handles retry/DLQ flow.
+
 telemetry:
   dlq-service:
     base-url: http://localhost:8085

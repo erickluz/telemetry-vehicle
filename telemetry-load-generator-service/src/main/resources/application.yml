@@ -5,6 +5,23 @@ spring:
 server:
   port: 8086
 
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health,info,metrics,prometheus
+  endpoint:
+    health:
+      show-details: always
+  metrics:
+    tags:
+      application: telemetry-load-generator-service
+
+info:
+  app:
+    name: telemetry-load-generator-service
+    description: Generates controlled telemetry load against the ingestion service.
+
 telemetry:
   ingestion:
     default-target-url: http://localhost:8081/api/telemetry

@@ -21,6 +21,23 @@ spring:
 server:
   port: 8084
 
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health,info,metrics,prometheus
+  endpoint:
+    health:
+      show-details: always
+  metrics:
+    tags:
+      application: vehicle-telemetry-dashboard
+
+info:
+  app:
+    name: vehicle-telemetry-dashboard
+    description: Provides operational dashboard APIs for telemetry, alerts and DLQ visibility.
+
 telemetry:
   dlq-service:
     base-url: http://localhost:8085
