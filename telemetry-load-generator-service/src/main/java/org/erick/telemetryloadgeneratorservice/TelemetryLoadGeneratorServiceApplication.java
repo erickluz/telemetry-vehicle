@@ -1,4 +1,4 @@
-package org.erick.vehicleingestionservice;
+package org.erick.telemetryloadgeneratorservice;
 
 import io.swagger.v3.oas.annotations.OpenAPIDefinition;
 import io.swagger.v3.oas.annotations.info.Contact;
@@ -10,13 +10,14 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 @SpringBootApplication
 @OpenAPIDefinition(
         info = @Info(
-                title = "Vehicle Ingestion Service API",
+                title = "Telemetry Load Generator Service API",
                 version = "1.0.0",
-                description = "HTTP API responsible for accepting vehicle telemetry events and publishing them to RabbitMQ for asynchronous processing.",
+                description = "API for starting, tracking and stopping controlled telemetry load tests against the ingestion service HTTP endpoint.",
                 contact = @Contact(name = "Telemetry Team"),
                 license = @License(name = "Apache 2.0")))
-public class VehicleIngestionServiceApplication {
+public class TelemetryLoadGeneratorServiceApplication {
+
     public static void main(String[] args) {
-        SpringApplication.run(VehicleIngestionServiceApplication.class, args);
+        SpringApplication.run(TelemetryLoadGeneratorServiceApplication.class, args);
     }
 }

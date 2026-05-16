@@ -22,6 +22,7 @@ if errorlevel 1 exit /b 1
 call :start_service vehicle-ingestion-service
 call :start_service telemetry-processor-service
 call :start_service telemetry-dlq-service
+call :start_service telemetry-load-generator-service
 call :start_service notification-service
 call :start_service vehicle-telemetry-dashboard
 

@@ -1,0 +1,30 @@
+spring:
+  application:
+    name: telemetry-load-generator-service
+
+server:
+  port: 8086
+
+telemetry:
+  ingestion:
+    default-target-url: http://localhost:8081/api/telemetry
+
+springdoc:
+  api-docs:
+    path: /api-docs
+  swagger-ui:
+    path: /swagger-ui.html
+    operationsSorter: method
+    tagsSorter: alpha
+    displayOperationId: true
+  show-actuator: false
+
+openapi:
+  info:
+    title: Telemetry Load Generator Service API
+    description: API para executar testes de carga contra o servico de ingestao de telemetria
+    version: 1.0.0
+    contact:
+      name: Telemetry Team
+    license:
+      name: Apache 2.0

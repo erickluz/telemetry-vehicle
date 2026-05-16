@@ -11,6 +11,7 @@ SERVICES="
 vehicle-ingestion-service
 telemetry-processor-service
 telemetry-dlq-service
+telemetry-load-generator-service
 notification-service
 vehicle-telemetry-dashboard
 "
