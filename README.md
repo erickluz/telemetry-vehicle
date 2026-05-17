@@ -14,3 +14,24 @@ Each Spring Boot service exposes the basic Actuator endpoints below for local/de
 | telemetry-load-generator-service | 8086 | http://localhost:8086/actuator/health | http://localhost:8086/actuator/metrics | http://localhost:8086/actuator/prometheus |
 
 Only `health`, `info`, `metrics`, and `prometheus` are exposed through Actuator. Metrics are the default Spring Boot, JVM, HTTP server, Tomcat, and system metrics, with the Micrometer `application` tag set per service.
+
+## Local observability stack
+
+Prometheus and Grafana are available under [observability](observability/README.md).
+
+Start the stack:
+
+```bash
+cd observability
+docker compose up -d
+```
+
+URLs:
+
+- Prometheus: http://localhost:9090
+- Grafana: http://localhost:3000
+- Grafana login: `admin` / `admin`
+
+Prometheus is configured to scrape the Spring Boot `/actuator/prometheus` endpoints through `host.docker.internal`. Grafana provisions the Prometheus datasource and loads the dashboards from `observability/grafana/dashboards` automatically.
+
+To validate, open Prometheus and go to `Status > Targets`. Running services should appear as `UP`.

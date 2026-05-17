@@ -1,0 +1,70 @@
+{
+  "id": null,
+  "uid": "rabbitmq-overview",
+  "title": "RabbitMQ Overview",
+  "tags": ["telemetry", "rabbitmq"],
+  "timezone": "browser",
+  "schemaVersion": 39,
+  "version": 1,
+  "refresh": "5s",
+  "time": {"from": "now-15m", "to": "now"},
+  "panels": [
+    {
+      "id": 1,
+      "title": "RabbitMQ exporter UP",
+      "type": "stat",
+      "gridPos": {"h": 6, "w": 6, "x": 0, "y": 0},
+      "datasource": {"type": "prometheus", "uid": "prometheus"},
+      "targets": [{"expr": "up{job=\"rabbitmq\"}", "legendFormat": "rabbitmq"}],
+      "fieldConfig": {"defaults": {"mappings": [{"type": "value", "options": {"0": {"text": "DOWN", "color": "red"}, "1": {"text": "UP", "color": "green"}}}]}, "overrides": []}
+    },
+    {
+      "id": 2,
+      "title": "Queue messages ready",
+      "type": "timeseries",
+      "gridPos": {"h": 8, "w": 18, "x": 6, "y": 0},
+      "datasource": {"type": "prometheus", "uid": "prometheus"},
+      "targets": [{"expr": "rabbitmq_queue_messages_ready", "legendFormat": "{{queue}}"}]
+    },
+    {
+      "id": 3,
+      "title": "Queue messages unacked",
+      "type": "timeseries",
+      "gridPos": {"h": 8, "w": 12, "x": 0, "y": 8},
+      "datasource": {"type": "prometheus", "uid": "prometheus"},
+      "targets": [{"expr": "rabbitmq_queue_messages_unacked", "legendFormat": "{{queue}}"}]
+    },
+    {
+      "id": 4,
+      "title": "Publish rate",
+      "type": "timeseries",
+      "gridPos": {"h": 8, "w": 12, "x": 12, "y": 8},
+      "datasource": {"type": "prometheus", "uid": "prometheus"},
+      "targets": [{"expr": "sum by (queue) (rate(rabbitmq_queue_messages_published_total[1m]))", "legendFormat": "{{queue}}"}]
+    },
+    {
+      "id": 5,
+      "title": "Deliver/get rate",
+      "type": "timeseries",
+      "gridPos": {"h": 8, "w": 12, "x": 0, "y": 16},
+      "datasource": {"type": "prometheus", "uid": "prometheus"},
+      "targets": [{"expr": "sum by (queue) (rate(rabbitmq_queue_messages_delivered_total[1m]) + rate(rabbitmq_queue_messages_get_total[1m]))", "legendFormat": "{{queue}}"}]
+    },
+    {
+      "id": 6,
+      "title": "Consumers by queue",
+      "type": "timeseries",
+      "gridPos": {"h": 8, "w": 12, "x": 12, "y": 16},
+      "datasource": {"type": "prometheus", "uid": "prometheus"},
+      "targets": [{"expr": "rabbitmq_queue_consumers", "legendFormat": "{{queue}}"}]
+    },
+    {
+      "id": 7,
+      "title": "Telemetry queues messages",
+      "type": "timeseries",
+      "gridPos": {"h": 8, "w": 24, "x": 0, "y": 24},
+      "datasource": {"type": "prometheus", "uid": "prometheus"},
+      "targets": [{"expr": "rabbitmq_queue_messages{queue=~\"telemetry.events|telemetry.events.retry|telemetry.events.dlq|telemetry.alerts\"}", "legendFormat": "{{queue}}"}]
+    }
+  ]
+}

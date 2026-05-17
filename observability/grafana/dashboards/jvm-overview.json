@@ -1,0 +1,65 @@
+{
+  "id": null,
+  "uid": "jvm-overview",
+  "title": "JVM Overview",
+  "tags": ["telemetry", "jvm", "spring-boot"],
+  "timezone": "browser",
+  "schemaVersion": 39,
+  "version": 1,
+  "refresh": "5s",
+  "time": {"from": "now-15m", "to": "now"},
+  "panels": [
+    {
+      "id": 1,
+      "title": "JVM memory used",
+      "type": "timeseries",
+      "gridPos": {"h": 8, "w": 12, "x": 0, "y": 0},
+      "datasource": {"type": "prometheus", "uid": "prometheus"},
+      "targets": [{"expr": "sum by (application, area) (jvm_memory_used_bytes)", "legendFormat": "{{application}} {{area}}"}],
+      "fieldConfig": {"defaults": {"unit": "bytes"}, "overrides": []}
+    },
+    {
+      "id": 2,
+      "title": "JVM memory max",
+      "type": "timeseries",
+      "gridPos": {"h": 8, "w": 12, "x": 12, "y": 0},
+      "datasource": {"type": "prometheus", "uid": "prometheus"},
+      "targets": [{"expr": "sum by (application, area) (jvm_memory_max_bytes)", "legendFormat": "{{application}} {{area}}"}],
+      "fieldConfig": {"defaults": {"unit": "bytes"}, "overrides": []}
+    },
+    {
+      "id": 3,
+      "title": "JVM live threads",
+      "type": "timeseries",
+      "gridPos": {"h": 8, "w": 8, "x": 0, "y": 8},
+      "datasource": {"type": "prometheus", "uid": "prometheus"},
+      "targets": [{"expr": "jvm_threads_live_threads", "legendFormat": "{{application}}"}]
+    },
+    {
+      "id": 4,
+      "title": "JVM GC pause rate",
+      "type": "timeseries",
+      "gridPos": {"h": 8, "w": 8, "x": 8, "y": 8},
+      "datasource": {"type": "prometheus", "uid": "prometheus"},
+      "targets": [{"expr": "sum by (application, action, cause) (rate(jvm_gc_pause_seconds_count[1m]))", "legendFormat": "{{application}} {{action}} {{cause}}"}]
+    },
+    {
+      "id": 5,
+      "title": "Process CPU usage",
+      "type": "timeseries",
+      "gridPos": {"h": 8, "w": 8, "x": 16, "y": 8},
+      "datasource": {"type": "prometheus", "uid": "prometheus"},
+      "targets": [{"expr": "process_cpu_usage", "legendFormat": "{{application}}"}],
+      "fieldConfig": {"defaults": {"unit": "percentunit"}, "overrides": []}
+    },
+    {
+      "id": 6,
+      "title": "System CPU usage",
+      "type": "timeseries",
+      "gridPos": {"h": 8, "w": 24, "x": 0, "y": 16},
+      "datasource": {"type": "prometheus", "uid": "prometheus"},
+      "targets": [{"expr": "system_cpu_usage", "legendFormat": "{{application}}"}],
+      "fieldConfig": {"defaults": {"unit": "percentunit"}, "overrides": []}
+    }
+  ]
+}

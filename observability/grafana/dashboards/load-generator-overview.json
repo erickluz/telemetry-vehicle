@@ -1,0 +1,74 @@
+{
+  "id": null,
+  "uid": "load-generator-overview",
+  "title": "Load Generator Overview",
+  "tags": ["telemetry", "load-generator"],
+  "timezone": "browser",
+  "schemaVersion": 39,
+  "version": 1,
+  "refresh": "5s",
+  "time": {"from": "now-15m", "to": "now"},
+  "panels": [
+    {
+      "id": 1,
+      "title": "Load generator health",
+      "type": "stat",
+      "gridPos": {"h": 6, "w": 6, "x": 0, "y": 0},
+      "datasource": {"type": "prometheus", "uid": "prometheus"},
+      "targets": [{"expr": "up{job=\"telemetry-load-generator-service\"}", "legendFormat": "load-generator"}],
+      "fieldConfig": {"defaults": {"mappings": [{"type": "value", "options": {"0": {"text": "DOWN", "color": "red"}, "1": {"text": "UP", "color": "green"}}}]}, "overrides": []}
+    },
+    {
+      "id": 2,
+      "title": "Load generator API requests",
+      "type": "timeseries",
+      "gridPos": {"h": 8, "w": 18, "x": 6, "y": 0},
+      "datasource": {"type": "prometheus", "uid": "prometheus"},
+      "targets": [{"expr": "sum by (uri, status) (rate(http_server_requests_seconds_count{application=\"telemetry-load-generator-service\"}[1m]))", "legendFormat": "{{uri}} {{status}}"}]
+    },
+    {
+      "id": 3,
+      "title": "2xx responses",
+      "type": "timeseries",
+      "gridPos": {"h": 8, "w": 8, "x": 0, "y": 8},
+      "datasource": {"type": "prometheus", "uid": "prometheus"},
+      "targets": [{"expr": "sum(rate(http_server_requests_seconds_count{application=\"telemetry-load-generator-service\",status=~\"2..\"}[1m]))", "legendFormat": "2xx"}]
+    },
+    {
+      "id": 4,
+      "title": "4xx and 5xx responses",
+      "type": "timeseries",
+      "gridPos": {"h": 8, "w": 8, "x": 8, "y": 8},
+      "datasource": {"type": "prometheus", "uid": "prometheus"},
+      "targets": [{"expr": "sum by (status) (rate(http_server_requests_seconds_count{application=\"telemetry-load-generator-service\",status=~\"4..|5..\"}[1m]))", "legendFormat": "{{status}}"}]
+    },
+    {
+      "id": 5,
+      "title": "Load generator endpoint latency",
+      "type": "timeseries",
+      "gridPos": {"h": 8, "w": 8, "x": 16, "y": 8},
+      "datasource": {"type": "prometheus", "uid": "prometheus"},
+      "targets": [{"expr": "sum by (uri) (rate(http_server_requests_seconds_sum{application=\"telemetry-load-generator-service\"}[1m])) / sum by (uri) (rate(http_server_requests_seconds_count{application=\"telemetry-load-generator-service\"}[1m]))", "legendFormat": "{{uri}}"}],
+      "fieldConfig": {"defaults": {"unit": "s"}, "overrides": []}
+    },
+    {
+      "id": 6,
+      "title": "Load generator JVM memory",
+      "type": "timeseries",
+      "gridPos": {"h": 8, "w": 12, "x": 0, "y": 16},
+      "datasource": {"type": "prometheus", "uid": "prometheus"},
+      "targets": [{"expr": "sum by (area) (jvm_memory_used_bytes{application=\"telemetry-load-generator-service\"})", "legendFormat": "{{area}}"}],
+      "fieldConfig": {"defaults": {"unit": "bytes"}, "overrides": []}
+    },
+    {
+      "id": 7,
+      "title": "Custom load metrics TODO",
+      "type": "text",
+      "gridPos": {"h": 8, "w": 12, "x": 12, "y": 16},
+      "options": {
+        "mode": "markdown",
+        "content": "Custom load-generator metrics can be added later: `telemetry_load_sent_events_total`, `telemetry_load_success_responses_total`, `telemetry_load_failed_responses_total`, and `telemetry_load_running_tests`."
+      }
+    }
+  ]
+}

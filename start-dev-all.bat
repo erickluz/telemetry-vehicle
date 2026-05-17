@@ -9,14 +9,24 @@ if not exist "%MAVEN_CMD%" set "MAVEN_CMD=mvn.cmd"
 
 set "MAVEN_ARGS=-Pstandalone spring-boot:run"
 set "COMPOSE_FILE=%REPO_ROOT%\docker-compose.yml"
+set "OBSERVABILITY_COMPOSE_FILE=%REPO_ROOT%\observability\docker-compose.yml"
 
 if not exist "%COMPOSE_FILE%" (
     echo docker-compose.yml not found at "%COMPOSE_FILE%"
     exit /b 1
 )
 
+if not exist "%OBSERVABILITY_COMPOSE_FILE%" (
+    echo observability docker-compose.yml not found at "%OBSERVABILITY_COMPOSE_FILE%"
+    exit /b 1
+)
+
 echo Starting Docker Compose services...
 docker compose -f "%COMPOSE_FILE%" up -d
+if errorlevel 1 exit /b 1
+
+echo Starting observability services...
+docker compose -f "%OBSERVABILITY_COMPOSE_FILE%" up -d
 if errorlevel 1 exit /b 1
 
 call :start_service vehicle-ingestion-service
@@ -29,6 +39,18 @@ call :start_service vehicle-telemetry-dashboard
 echo.
 echo All development services were started in separate windows.
 echo Maven command: %MAVEN_CMD%
+echo.
+echo Observability:
+echo   Prometheus: http://localhost:9090
+echo   Grafana:    http://localhost:3000  ^(admin/admin^)
+echo.
+echo Actuator Prometheus endpoints:
+echo   vehicle-ingestion-service:          http://localhost:8081/actuator/prometheus
+echo   telemetry-processor-service:        http://localhost:8082/actuator/prometheus
+echo   notification-service:               http://localhost:8083/actuator/prometheus
+echo   vehicle-telemetry-dashboard:        http://localhost:8084/actuator/prometheus
+echo   telemetry-dlq-service:              http://localhost:8085/actuator/prometheus
+echo   telemetry-load-generator-service:   http://localhost:8086/actuator/prometheus
 echo.
 exit /b 0
 

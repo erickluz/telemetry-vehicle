@@ -6,6 +6,7 @@ MAVEN_CMD=${MAVEN_CMD:-mvn}
 MAVEN_ARGS="-Pstandalone spring-boot:run"
 LOG_DIR="${SCRIPT_DIR}/.dev-logs"
 COMPOSE_FILE="${SCRIPT_DIR}/docker-compose.yml"
+OBSERVABILITY_COMPOSE_FILE="${SCRIPT_DIR}/observability/docker-compose.yml"
 
 SERVICES="
 vehicle-ingestion-service
@@ -23,8 +24,16 @@ if [ ! -f "$COMPOSE_FILE" ]; then
     exit 1
 fi
 
+if [ ! -f "$OBSERVABILITY_COMPOSE_FILE" ]; then
+    echo "observability docker-compose.yml not found at ${OBSERVABILITY_COMPOSE_FILE}"
+    exit 1
+fi
+
 echo "Starting Docker Compose services..."
 docker compose -f "$COMPOSE_FILE" up -d
+
+echo "Starting observability services..."
+docker compose -f "$OBSERVABILITY_COMPOSE_FILE" up -d
 
 pids=""
 
@@ -58,6 +67,18 @@ fi
 
 echo
 echo "All development services were started."
+echo "Observability:"
+echo "  Prometheus: http://localhost:9090"
+echo "  Grafana:    http://localhost:3000 (admin/admin)"
+echo
+echo "Actuator Prometheus endpoints:"
+echo "  vehicle-ingestion-service:          http://localhost:8081/actuator/prometheus"
+echo "  telemetry-processor-service:        http://localhost:8082/actuator/prometheus"
+echo "  notification-service:               http://localhost:8083/actuator/prometheus"
+echo "  vehicle-telemetry-dashboard:        http://localhost:8084/actuator/prometheus"
+echo "  telemetry-dlq-service:              http://localhost:8085/actuator/prometheus"
+echo "  telemetry-load-generator-service:   http://localhost:8086/actuator/prometheus"
+echo
 echo "Press Ctrl+C to stop them."
 echo
 

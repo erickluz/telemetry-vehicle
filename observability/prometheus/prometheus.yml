@@ -1,0 +1,58 @@
+global:
+  scrape_interval: 5s
+  evaluation_interval: 5s
+
+scrape_configs:
+  - job_name: 'vehicle-ingestion-service'
+    metrics_path: '/actuator/prometheus'
+    static_configs:
+      - targets: ['host.docker.internal:8081']
+        labels:
+          application: 'vehicle-ingestion-service'
+
+  - job_name: 'telemetry-processor-service'
+    metrics_path: '/actuator/prometheus'
+    static_configs:
+      - targets: ['host.docker.internal:8082']
+        labels:
+          application: 'telemetry-processor-service'
+
+  - job_name: 'notification-service'
+    metrics_path: '/actuator/prometheus'
+    static_configs:
+      - targets: ['host.docker.internal:8083']
+        labels:
+          application: 'notification-service'
+
+  - job_name: 'vehicle-telemetry-dashboard'
+    metrics_path: '/actuator/prometheus'
+    static_configs:
+      - targets: ['host.docker.internal:8084']
+        labels:
+          application: 'vehicle-telemetry-dashboard'
+
+  - job_name: 'telemetry-dlq-service'
+    metrics_path: '/actuator/prometheus'
+    static_configs:
+      - targets: ['host.docker.internal:8085']
+        labels:
+          application: 'telemetry-dlq-service'
+
+  - job_name: 'telemetry-load-generator-service'
+    metrics_path: '/actuator/prometheus'
+    static_configs:
+      - targets: ['host.docker.internal:8086']
+        labels:
+          application: 'telemetry-load-generator-service'
+
+  - job_name: 'rabbitmq'
+    metrics_path: '/metrics'
+    static_configs:
+      - targets: ['host.docker.internal:15692']
+
+  - job_name: 'rabbitmq-detailed-queues'
+    metrics_path: '/metrics/detailed'
+    params:
+      family: ['queue_coarse_metrics']
+    static_configs:
+      - targets: ['host.docker.internal:15692']

@@ -1,0 +1,748 @@
+{
+  "id": null,
+  "uid": "telemetry-system-flow-overview",
+  "title": "Telemetry System Flow Overview",
+  "tags": ["telemetry", "overview", "system-flow", "rabbitmq", "spring-boot"],
+  "timezone": "browser",
+  "schemaVersion": 39,
+  "version": 6,
+  "refresh": "5s",
+  "time": {
+    "from": "now-15m",
+    "to": "now"
+  },
+  "templating": {
+    "list": [
+      {
+        "name": "service",
+        "type": "query",
+        "datasource": {
+          "type": "prometheus",
+          "uid": "prometheus"
+        },
+        "query": "label_values(up, job)",
+        "refresh": 1,
+        "includeAll": true,
+        "allValue": ".*",
+        "multi": true,
+        "current": {
+          "selected": true,
+          "text": "All",
+          "value": "$__all"
+        }
+      },
+      {
+        "name": "queue",
+        "type": "custom",
+        "query": "telemetry.events,telemetry.events.retry,telemetry.events.dlq,telemetry.alerts",
+        "includeAll": true,
+        "allValue": "telemetry\\.events|telemetry\\.events\\.retry|telemetry\\.events\\.dlq|telemetry\\.alerts",
+        "multi": true,
+        "current": {
+          "selected": true,
+          "text": "All",
+          "value": "$__all"
+        }
+      }
+    ]
+  },
+  "panels": [
+    {
+      "id": 1,
+      "title": "A) System Health",
+      "type": "row",
+      "gridPos": {"h": 1, "w": 24, "x": 0, "y": 0},
+      "collapsed": false,
+      "panels": []
+    },
+    {
+      "id": 2,
+      "title": "Services UP",
+      "description": "Total Prometheus targets currently reachable. A lower value means at least one service or RabbitMQ metrics target is down.",
+      "type": "stat",
+      "gridPos": {"h": 5, "w": 4, "x": 0, "y": 1},
+      "datasource": {"type": "prometheus", "uid": "prometheus"},
+      "targets": [{"expr": "sum(up)", "legendFormat": "up"}],
+      "options": {"reduceOptions": {"calcs": ["lastNotNull"]}, "orientation": "auto"}
+    },
+    {
+      "id": 3,
+      "title": "Services DOWN",
+      "description": "Targets reporting DOWN. Empty means all configured targets are reachable.",
+      "type": "table",
+      "gridPos": {"h": 5, "w": 8, "x": 4, "y": 1},
+      "datasource": {"type": "prometheus", "uid": "prometheus"},
+      "targets": [{"expr": "up == 0", "legendFormat": "{{job}}"}]
+    },
+    {
+      "id": 4,
+      "title": "Total HTTP RPS",
+      "description": "Aggregate request rate across all Spring Boot services.",
+      "type": "stat",
+      "gridPos": {"h": 5, "w": 4, "x": 12, "y": 1},
+      "datasource": {"type": "prometheus", "uid": "prometheus"},
+      "targets": [{"expr": "sum(rate(http_server_requests_seconds_count[1m]))", "legendFormat": "rps"}],
+      "fieldConfig": {"defaults": {"unit": "reqps"}, "overrides": []}
+    },
+    {
+      "id": 5,
+      "title": "Total HTTP 5xx RPS",
+      "description": "Aggregate server error rate. Use the HTTP error panels below to identify the service.",
+      "type": "stat",
+      "gridPos": {"h": 5, "w": 4, "x": 16, "y": 1},
+      "datasource": {"type": "prometheus", "uid": "prometheus"},
+      "targets": [{"expr": "sum(rate(http_server_requests_seconds_count{status=~\"5..\"}[1m]))", "legendFormat": "5xx"}],
+      "fieldConfig": {"defaults": {"unit": "reqps"}, "overrides": []}
+    },
+    {
+      "id": 6,
+      "title": "Average HTTP Latency",
+      "description": "Global average HTTP latency across services.",
+      "type": "stat",
+      "gridPos": {"h": 5, "w": 4, "x": 20, "y": 1},
+      "datasource": {"type": "prometheus", "uid": "prometheus"},
+      "targets": [{"expr": "sum(rate(http_server_requests_seconds_sum[1m])) / sum(rate(http_server_requests_seconds_count[1m]))", "legendFormat": "latency"}],
+      "fieldConfig": {"defaults": {"unit": "s"}, "overrides": []}
+    },
+    {
+      "id": 7,
+      "title": "B) Load Generator",
+      "type": "row",
+      "gridPos": {"h": 1, "w": 24, "x": 0, "y": 6},
+      "collapsed": false,
+      "panels": []
+    },
+    {
+      "id": 8,
+      "title": "Load Generator HTTP Requests",
+      "description": "API traffic hitting telemetry-load-generator-service.",
+      "type": "stat",
+      "gridPos": {"h": 5, "w": 6, "x": 0, "y": 7},
+      "datasource": {"type": "prometheus", "uid": "prometheus"},
+      "targets": [{"expr": "sum(rate(http_server_requests_seconds_count{job=\"telemetry-load-generator-service\"}[1m]))", "legendFormat": "rps"}],
+      "fieldConfig": {"defaults": {"unit": "reqps"}, "overrides": []}
+    },
+    {
+      "id": 9,
+      "title": "Load Generator Errors",
+      "description": "4xx and 5xx responses from telemetry-load-generator-service.",
+      "type": "stat",
+      "gridPos": {"h": 5, "w": 6, "x": 6, "y": 7},
+      "datasource": {"type": "prometheus", "uid": "prometheus"},
+      "targets": [{"expr": "sum(rate(http_server_requests_seconds_count{job=\"telemetry-load-generator-service\",status=~\"5..|4..\"}[1m]))", "legendFormat": "errors"}],
+      "fieldConfig": {"defaults": {"unit": "reqps"}, "overrides": []}
+    },
+    {
+      "id": 10,
+      "title": "Load Generator RPS by URI",
+      "description": "Shows which load-generator endpoints are being used.",
+      "type": "timeseries",
+      "gridPos": {"h": 8, "w": 12, "x": 12, "y": 7},
+      "datasource": {"type": "prometheus", "uid": "prometheus"},
+      "targets": [{"expr": "sum by (uri) (rate(http_server_requests_seconds_count{job=\"telemetry-load-generator-service\"}[1m]))", "legendFormat": "{{uri}}"}],
+      "fieldConfig": {"defaults": {"unit": "reqps"}, "overrides": []}
+    },
+    {
+      "id": 11,
+      "title": "TODO - Custom metric required - Load Sent Events",
+      "description": "Will show generated telemetry events when telemetry_load_events_sent_total is added.",
+      "type": "stat",
+      "gridPos": {"h": 5, "w": 12, "x": 0, "y": 12},
+      "datasource": {"type": "prometheus", "uid": "prometheus"},
+      "targets": [{"expr": "sum(rate(telemetry_load_events_sent_total[1m]))", "legendFormat": "events/s"}],
+      "fieldConfig": {"defaults": {"unit": "ops"}, "overrides": []}
+    },
+    {
+      "id": 12,
+      "title": "C) Ingestion",
+      "type": "row",
+      "gridPos": {"h": 1, "w": 24, "x": 0, "y": 17},
+      "collapsed": false,
+      "panels": []
+    },
+    {
+      "id": 13,
+      "title": "Ingestion RPS",
+      "description": "Request rate reaching the ingestion service. The repo job is vehicle-ingestion-service.",
+      "type": "stat",
+      "gridPos": {"h": 5, "w": 6, "x": 0, "y": 18},
+      "datasource": {"type": "prometheus", "uid": "prometheus"},
+      "targets": [{"expr": "sum(rate(http_server_requests_seconds_count{job=~\"vehicle-ingestion-service|telemetry-ingestion-service\"}[1m])) or vector(0)", "legendFormat": "rps"}],
+      "fieldConfig": {"defaults": {"unit": "reqps"}, "overrides": []}
+    },
+    {
+      "id": 14,
+      "title": "Ingestion Errors",
+      "description": "4xx and 5xx responses from the ingestion service.",
+      "type": "stat",
+      "gridPos": {"h": 5, "w": 6, "x": 6, "y": 18},
+      "datasource": {"type": "prometheus", "uid": "prometheus"},
+      "targets": [{"expr": "sum(rate(http_server_requests_seconds_count{job=~\"vehicle-ingestion-service|telemetry-ingestion-service\",status=~\"5..|4..\"}[1m])) or vector(0)", "legendFormat": "errors"}],
+      "fieldConfig": {"defaults": {"unit": "reqps"}, "overrides": []}
+    },
+    {
+      "id": 15,
+      "title": "Ingestion Latency",
+      "description": "Average latency for ingestion HTTP endpoints.",
+      "type": "timeseries",
+      "gridPos": {"h": 8, "w": 12, "x": 12, "y": 18},
+      "datasource": {"type": "prometheus", "uid": "prometheus"},
+      "targets": [{"expr": "(sum(rate(http_server_requests_seconds_sum{job=~\"vehicle-ingestion-service|telemetry-ingestion-service\"}[1m])) / clamp_min(sum(rate(http_server_requests_seconds_count{job=~\"vehicle-ingestion-service|telemetry-ingestion-service\"}[1m])), 1)) or vector(0)", "legendFormat": "latency"}],
+      "fieldConfig": {"defaults": {"unit": "s"}, "overrides": []}
+    },
+    {
+      "id": 16,
+      "title": "Ingestion Target UP",
+      "description": "Prometheus reachability for the ingestion service target.",
+      "type": "stat",
+      "gridPos": {"h": 5, "w": 6, "x": 0, "y": 23},
+      "datasource": {"type": "prometheus", "uid": "prometheus"},
+      "targets": [{"expr": "max(up{job=~\"vehicle-ingestion-service|telemetry-ingestion-service\"}) or vector(0)", "legendFormat": "up"}],
+      "fieldConfig": {"defaults": {"mappings": [{"type": "value", "options": {"0": {"text": "DOWN", "color": "red"}, "1": {"text": "UP", "color": "green"}}}]}, "overrides": []}
+    },
+    {
+      "id": 17,
+      "title": "Ingestion Scrape Samples",
+      "description": "Number of samples scraped from the ingestion service. A zero value means the target is not being scraped successfully.",
+      "type": "stat",
+      "gridPos": {"h": 5, "w": 6, "x": 6, "y": 23},
+      "datasource": {"type": "prometheus", "uid": "prometheus"},
+      "targets": [{"expr": "sum(scrape_samples_scraped{job=~\"vehicle-ingestion-service|telemetry-ingestion-service\"}) or vector(0)", "legendFormat": "samples"}],
+      "fieldConfig": {"defaults": {"unit": "short"}, "overrides": []}
+    },
+    {
+      "id": 18,
+      "title": "D) RabbitMQ Flow",
+      "type": "row",
+      "gridPos": {"h": 1, "w": 24, "x": 0, "y": 31},
+      "collapsed": false,
+      "panels": []
+    },
+    {
+      "id": 19,
+      "title": "RabbitMQ Broker UP",
+      "description": "Prometheus reachability for RabbitMQ aggregate and detailed queue scrape targets.",
+      "type": "stat",
+      "gridPos": {"h": 5, "w": 4, "x": 0, "y": 32},
+      "datasource": {"type": "prometheus", "uid": "prometheus"},
+      "targets": [
+        {"expr": "up{job=~\"rabbitmq|rabbitmq-detailed-queues\"}", "legendFormat": "{{job}}"}
+      ],
+      "fieldConfig": {"defaults": {"mappings": [{"type": "value", "options": {"0": {"text": "DOWN", "color": "red"}, "1": {"text": "UP", "color": "green"}}}]}, "overrides": []}
+    },
+    {
+      "id": 20,
+      "title": "RabbitMQ Connections",
+      "description": "Current broker-level client connections.",
+      "type": "stat",
+      "gridPos": {"h": 5, "w": 4, "x": 4, "y": 32},
+      "datasource": {"type": "prometheus", "uid": "prometheus"},
+      "targets": [{"expr": "sum(rabbitmq_connections{job=\"rabbitmq\"}) or vector(0)", "legendFormat": "connections"}],
+      "fieldConfig": {"defaults": {"unit": "short"}, "overrides": []}
+    },
+    {
+      "id": 21,
+      "title": "RabbitMQ Channels",
+      "description": "Current broker-level channels.",
+      "type": "stat",
+      "gridPos": {"h": 5, "w": 4, "x": 8, "y": 32},
+      "datasource": {"type": "prometheus", "uid": "prometheus"},
+      "targets": [{"expr": "sum(rabbitmq_channels{job=\"rabbitmq\"}) or vector(0)", "legendFormat": "channels"}],
+      "fieldConfig": {"defaults": {"unit": "short"}, "overrides": []}
+    },
+    {
+      "id": 22,
+      "title": "RabbitMQ Consumers",
+      "description": "Current broker-level consumers.",
+      "type": "stat",
+      "gridPos": {"h": 5, "w": 4, "x": 12, "y": 32},
+      "datasource": {"type": "prometheus", "uid": "prometheus"},
+      "targets": [{"expr": "sum(rabbitmq_consumers{job=\"rabbitmq\"}) or vector(0)", "legendFormat": "consumers"}],
+      "fieldConfig": {"defaults": {"unit": "short"}, "overrides": []}
+    },
+    {
+      "id": 23,
+      "title": "RabbitMQ Queues",
+      "description": "Current number of queues in the broker.",
+      "type": "stat",
+      "gridPos": {"h": 5, "w": 4, "x": 16, "y": 32},
+      "datasource": {"type": "prometheus", "uid": "prometheus"},
+      "targets": [{"expr": "sum(rabbitmq_queues{job=\"rabbitmq\"}) or vector(0)", "legendFormat": "queues"}],
+      "fieldConfig": {"defaults": {"unit": "short"}, "overrides": []}
+    },
+    {
+      "id": 24,
+      "title": "RabbitMQ Memory Usage %",
+      "description": "Broker memory pressure. High values increase operational risk.",
+      "type": "gauge",
+      "gridPos": {"h": 5, "w": 4, "x": 20, "y": 32},
+      "datasource": {"type": "prometheus", "uid": "prometheus"},
+      "targets": [{"expr": "(100 * sum(rabbitmq_process_resident_memory_bytes{job=\"rabbitmq\"}) / clamp_min(sum(rabbitmq_resident_memory_limit_bytes{job=\"rabbitmq\"}), 1)) or (100 * sum(rabbitmq_node_mem_used{job=\"rabbitmq\"}) / clamp_min(sum(rabbitmq_node_mem_limit{job=\"rabbitmq\"}), 1)) or vector(0)", "legendFormat": "memory %"}],
+      "fieldConfig": {"defaults": {"unit": "percent", "thresholds": {"mode": "absolute", "steps": [{"color": "green"}, {"color": "yellow", "value": 70}, {"color": "red", "value": 85}]}}, "overrides": []}
+    },
+    {
+      "id": 100,
+      "title": "Ready Messages by Queue",
+      "description": "Ready messages are waiting to be consumed.",
+      "type": "bargauge",
+      "gridPos": {"h": 8, "w": 8, "x": 0, "y": 37},
+      "datasource": {"type": "prometheus", "uid": "prometheus"},
+      "targets": [{"expr": "sum by (queue) (rabbitmq_detailed_queue_messages_ready{queue=~\"telemetry\\\\.events|telemetry\\\\.events\\\\.retry|telemetry\\\\.events\\\\.dlq|telemetry\\\\.alerts|vehicle\\\\.dashboard\\\\.alerts\"}) or sum by (queue) (rabbitmq_queue_messages_ready{queue=~\"telemetry\\\\.events|telemetry\\\\.events\\\\.retry|telemetry\\\\.events\\\\.dlq|telemetry\\\\.alerts|vehicle\\\\.dashboard\\\\.alerts\"}) or sum by (name) (rabbitmq_detailed_queue_messages_ready{name=~\"telemetry\\\\.events|telemetry\\\\.events\\\\.retry|telemetry\\\\.events\\\\.dlq|telemetry\\\\.alerts|vehicle\\\\.dashboard\\\\.alerts\"})", "legendFormat": "{{queue}}{{name}}"}],
+      "fieldConfig": {"defaults": {"unit": "short"}, "overrides": []}
+    },
+    {
+      "id": 101,
+      "title": "Unacked Messages by Queue",
+      "description": "Unacked messages were delivered to consumers but have not been ACKed yet.",
+      "type": "bargauge",
+      "gridPos": {"h": 8, "w": 8, "x": 8, "y": 37},
+      "datasource": {"type": "prometheus", "uid": "prometheus"},
+      "targets": [{"expr": "sum by (queue) (rabbitmq_detailed_queue_messages_unacked{queue=~\"telemetry\\\\.events|telemetry\\\\.events\\\\.retry|telemetry\\\\.events\\\\.dlq|telemetry\\\\.alerts|vehicle\\\\.dashboard\\\\.alerts\"}) or sum by (queue) (rabbitmq_queue_messages_unacked{queue=~\"telemetry\\\\.events|telemetry\\\\.events\\\\.retry|telemetry\\\\.events\\\\.dlq|telemetry\\\\.alerts|vehicle\\\\.dashboard\\\\.alerts\"}) or sum by (name) (rabbitmq_detailed_queue_messages_unacked{name=~\"telemetry\\\\.events|telemetry\\\\.events\\\\.retry|telemetry\\\\.events\\\\.dlq|telemetry\\\\.alerts|vehicle\\\\.dashboard\\\\.alerts\"})", "legendFormat": "{{queue}}{{name}}"}],
+      "fieldConfig": {"defaults": {"unit": "short"}, "overrides": []}
+    },
+    {
+      "id": 102,
+      "title": "Consumers by Queue",
+      "description": "A queue with 0 consumers can indicate a stopped consumer service or unused binding.",
+      "type": "bargauge",
+      "gridPos": {"h": 8, "w": 8, "x": 16, "y": 37},
+      "datasource": {"type": "prometheus", "uid": "prometheus"},
+      "targets": [{"expr": "sum by (queue) (rabbitmq_queue_consumers{queue=~\"telemetry\\\\.events|telemetry\\\\.events\\\\.retry|telemetry\\\\.events\\\\.dlq|telemetry\\\\.alerts|vehicle\\\\.dashboard\\\\.alerts\"}) or sum by (name) (rabbitmq_detailed_queue_consumers{name=~\"telemetry\\\\.events|telemetry\\\\.events\\\\.retry|telemetry\\\\.events\\\\.dlq|telemetry\\\\.alerts|vehicle\\\\.dashboard\\\\.alerts\"}) or label_replace(sum(rabbitmq_consumers{job=\"rabbitmq\"}), \"queue\", \"all-queues\", \"job\", \".*\")", "legendFormat": "{{queue}}{{name}}"}],
+      "fieldConfig": {"defaults": {"unit": "short"}, "overrides": []}
+    },
+    {
+      "id": 103,
+      "title": "Queue Operational Status",
+      "description": "Per-queue ready and unacked message counts. Consumers are shown as aggregate if per-queue consumer metrics are unavailable.",
+      "type": "table",
+      "gridPos": {"h": 7, "w": 24, "x": 0, "y": 45},
+      "datasource": {"type": "prometheus", "uid": "prometheus"},
+      "targets": [
+        {"expr": "sum by (queue) (rabbitmq_detailed_queue_messages_ready{queue=~\"telemetry\\\\.events|telemetry\\\\.events\\\\.retry|telemetry\\\\.events\\\\.dlq|telemetry\\\\.alerts|vehicle\\\\.dashboard\\\\.alerts\"}) or sum by (name) (rabbitmq_detailed_queue_messages_ready{name=~\"telemetry\\\\.events|telemetry\\\\.events\\\\.retry|telemetry\\\\.events\\\\.dlq|telemetry\\\\.alerts|vehicle\\\\.dashboard\\\\.alerts\"})", "legendFormat": "ready {{queue}}{{name}}"},
+        {"expr": "sum by (queue) (rabbitmq_detailed_queue_messages_unacked{queue=~\"telemetry\\\\.events|telemetry\\\\.events\\\\.retry|telemetry\\\\.events\\\\.dlq|telemetry\\\\.alerts|vehicle\\\\.dashboard\\\\.alerts\"}) or sum by (name) (rabbitmq_detailed_queue_messages_unacked{name=~\"telemetry\\\\.events|telemetry\\\\.events\\\\.retry|telemetry\\\\.events\\\\.dlq|telemetry\\\\.alerts|vehicle\\\\.dashboard\\\\.alerts\"})", "legendFormat": "unacked {{queue}}{{name}}"},
+        {"expr": "sum by (queue) (rabbitmq_queue_consumers{queue=~\"telemetry\\\\.events|telemetry\\\\.events\\\\.retry|telemetry\\\\.events\\\\.dlq|telemetry\\\\.alerts|vehicle\\\\.dashboard\\\\.alerts\"}) or sum by (name) (rabbitmq_detailed_queue_consumers{name=~\"telemetry\\\\.events|telemetry\\\\.events\\\\.retry|telemetry\\\\.events\\\\.dlq|telemetry\\\\.alerts|vehicle\\\\.dashboard\\\\.alerts\"})", "legendFormat": "consumers {{queue}}{{name}}"}
+      ]
+    },
+    {
+      "id": 104,
+      "title": "Broker Message Rates",
+      "description": "Publish vs delivery rate. If incoming/routed is greater than delivered for long periods, backlog tends to grow.",
+      "type": "timeseries",
+      "gridPos": {"h": 8, "w": 8, "x": 0, "y": 52},
+      "datasource": {"type": "prometheus", "uid": "prometheus"},
+      "targets": [
+        {"expr": "sum(rate(rabbitmq_global_messages_received_total{job=\"rabbitmq\"}[1m])) or vector(0)", "legendFormat": "received"},
+        {"expr": "sum(rate(rabbitmq_global_messages_routed_total{job=\"rabbitmq\"}[1m])) or vector(0)", "legendFormat": "routed"},
+        {"expr": "sum(rate(rabbitmq_global_messages_delivered_total{job=\"rabbitmq\"}[1m])) or vector(0)", "legendFormat": "delivered"}
+      ],
+      "fieldConfig": {"defaults": {"unit": "ops"}, "overrides": []}
+    },
+    {
+      "id": 105,
+      "title": "Queue Publish Rate by Queue",
+      "description": "Per-queue publish rate when available, with aggregate broker fallback.",
+      "type": "timeseries",
+      "gridPos": {"h": 8, "w": 8, "x": 8, "y": 52},
+      "datasource": {"type": "prometheus", "uid": "prometheus"},
+      "targets": [{"expr": "sum by (queue) (rate(rabbitmq_detailed_queue_messages_published_total{queue=~\"telemetry.*|vehicle.*\"}[1m])) or sum by (name) (rate(rabbitmq_detailed_queue_messages_published_total{name=~\"telemetry.*|vehicle.*\"}[1m])) or sum by (queue) (rate(rabbitmq_queue_messages_published_total{queue=~\"telemetry.*|vehicle.*\"}[1m])) or label_replace(sum(rate(rabbitmq_queue_messages_published_total{job=\"rabbitmq\"}[1m])), \"queue\", \"all-queues\", \"job\", \".*\") or vector(0)", "legendFormat": "{{queue}}{{name}}"}],
+      "fieldConfig": {"defaults": {"unit": "ops"}, "overrides": []}
+    },
+    {
+      "id": 106,
+      "title": "Queue Delivery / Ack Rate by Queue",
+      "description": "Delivery and ACK rate by queue when available, with broker delivery fallback.",
+      "type": "timeseries",
+      "gridPos": {"h": 8, "w": 8, "x": 16, "y": 52},
+      "datasource": {"type": "prometheus", "uid": "prometheus"},
+      "targets": [
+        {"expr": "sum by (queue) (rate(rabbitmq_detailed_queue_messages_delivered_total{queue=~\"telemetry.*|vehicle.*\"}[1m])) or sum by (name) (rate(rabbitmq_detailed_queue_messages_delivered_total{name=~\"telemetry.*|vehicle.*\"}[1m])) or label_replace(sum(rate(rabbitmq_global_messages_delivered_total{job=\"rabbitmq\"}[1m])), \"queue\", \"all-queues-delivered\", \"job\", \".*\") or vector(0)", "legendFormat": "delivered {{queue}}{{name}}"},
+        {"expr": "sum by (queue) (rate(rabbitmq_detailed_queue_messages_acknowledged_total{queue=~\"telemetry.*|vehicle.*\"}[1m])) or sum by (name) (rate(rabbitmq_detailed_queue_messages_acknowledged_total{name=~\"telemetry.*|vehicle.*\"}[1m])) or vector(0)", "legendFormat": "acked {{queue}}{{name}}"}
+      ],
+      "fieldConfig": {"defaults": {"unit": "ops"}, "overrides": []}
+    },
+    {
+      "id": 107,
+      "title": "Redelivery Rate",
+      "description": "Redeliveries indicate messages being retried after failed or timed-out consumption.",
+      "type": "timeseries",
+      "gridPos": {"h": 7, "w": 12, "x": 0, "y": 60},
+      "datasource": {"type": "prometheus", "uid": "prometheus"},
+      "targets": [{"expr": "sum by (queue) (rate(rabbitmq_detailed_queue_messages_redelivered_total{queue=~\"telemetry.*|vehicle.*\"}[1m])) or sum by (name) (rate(rabbitmq_detailed_queue_messages_redelivered_total{name=~\"telemetry.*|vehicle.*\"}[1m])) or sum(rate(rabbitmq_global_messages_redelivered_total{job=\"rabbitmq\"}[1m])) or vector(0)", "legendFormat": "{{queue}}{{name}}redelivered"}],
+      "fieldConfig": {"defaults": {"unit": "ops"}, "overrides": []}
+    },
+    {
+      "id": 108,
+      "title": "RabbitMQ Memory Used",
+      "description": "Broker resident memory in bytes.",
+      "type": "timeseries",
+      "gridPos": {"h": 7, "w": 12, "x": 12, "y": 60},
+      "datasource": {"type": "prometheus", "uid": "prometheus"},
+      "targets": [{"expr": "sum(rabbitmq_process_resident_memory_bytes{job=\"rabbitmq\"}) or sum(rabbitmq_node_mem_used{job=\"rabbitmq\"}) or vector(0)", "legendFormat": "memory"}],
+      "fieldConfig": {"defaults": {"unit": "bytes"}, "overrides": []}
+    },
+    {
+      "id": 109,
+      "title": "Main Queue Depth",
+      "description": "Ready messages waiting in telemetry.events.",
+      "type": "stat",
+      "gridPos": {"h": 6, "w": 4, "x": 0, "y": 67},
+      "datasource": {"type": "prometheus", "uid": "prometheus"},
+      "targets": [{"expr": "sum(rabbitmq_detailed_queue_messages_ready{queue=\"telemetry.events\"}) or sum(rabbitmq_queue_messages_ready{queue=\"telemetry.events\"}) or sum(rabbitmq_detailed_queue_messages_ready{name=\"telemetry.events\"}) or vector(0)", "legendFormat": "main"}],
+      "fieldConfig": {"defaults": {"unit": "short", "thresholds": {"mode": "absolute", "steps": [{"color": "green"}, {"color": "yellow", "value": 100}, {"color": "red", "value": 1000}]}}, "overrides": []}
+    },
+    {
+      "id": 110,
+      "title": "Retry Queue Depth",
+      "description": "Retry depth: messages waiting for another processing attempt.",
+      "type": "stat",
+      "gridPos": {"h": 6, "w": 4, "x": 4, "y": 67},
+      "datasource": {"type": "prometheus", "uid": "prometheus"},
+      "targets": [{"expr": "sum(rabbitmq_detailed_queue_messages_ready{queue=\"telemetry.events.retry\"}) or sum(rabbitmq_queue_messages_ready{queue=\"telemetry.events.retry\"}) or sum(rabbitmq_detailed_queue_messages_ready{name=\"telemetry.events.retry\"}) or vector(0)", "legendFormat": "retry"}],
+      "fieldConfig": {"defaults": {"unit": "short", "thresholds": {"mode": "absolute", "steps": [{"color": "green"}, {"color": "yellow", "value": 1}, {"color": "red", "value": 50}]}}, "overrides": []}
+    },
+    {
+      "id": 111,
+      "title": "DLQ Queue Depth",
+      "description": "DLQ depth: messages that failed permanently and need operational action.",
+      "type": "stat",
+      "gridPos": {"h": 6, "w": 4, "x": 8, "y": 67},
+      "datasource": {"type": "prometheus", "uid": "prometheus"},
+      "targets": [{"expr": "sum(rabbitmq_detailed_queue_messages_ready{queue=\"telemetry.events.dlq\"}) or sum(rabbitmq_queue_messages_ready{queue=\"telemetry.events.dlq\"}) or sum(rabbitmq_detailed_queue_messages_ready{name=\"telemetry.events.dlq\"}) or vector(0)", "legendFormat": "dlq"}],
+      "fieldConfig": {"defaults": {"unit": "short", "thresholds": {"mode": "absolute", "steps": [{"color": "green"}, {"color": "yellow", "value": 1}, {"color": "red", "value": 10}]}}, "overrides": []}
+    },
+    {
+      "id": 112,
+      "title": "Alerts Queue Depth",
+      "description": "Ready messages waiting in telemetry.alerts.",
+      "type": "stat",
+      "gridPos": {"h": 6, "w": 4, "x": 12, "y": 67},
+      "datasource": {"type": "prometheus", "uid": "prometheus"},
+      "targets": [{"expr": "sum(rabbitmq_detailed_queue_messages_ready{queue=\"telemetry.alerts\"}) or sum(rabbitmq_queue_messages_ready{queue=\"telemetry.alerts\"}) or sum(rabbitmq_detailed_queue_messages_ready{name=\"telemetry.alerts\"}) or vector(0)", "legendFormat": "alerts"}],
+      "fieldConfig": {"defaults": {"unit": "short", "thresholds": {"mode": "absolute", "steps": [{"color": "green"}, {"color": "yellow", "value": 1}, {"color": "red", "value": 50}]}}, "overrides": []}
+    },
+    {
+      "id": 113,
+      "title": "TODO - metric unavailable - Queues Without Consumers",
+      "description": "Requires per-queue consumer metrics. Current RabbitMQ export exposes aggregate consumers only.",
+      "type": "stat",
+      "gridPos": {"h": 6, "w": 4, "x": 16, "y": 67},
+      "datasource": {"type": "prometheus", "uid": "prometheus"},
+      "targets": [{"expr": "count(rabbitmq_queue_consumers{queue=~\"telemetry.*|vehicle.*\"} == 0) or count(rabbitmq_detailed_queue_consumers{name=~\"telemetry.*|vehicle.*\"} == 0) or vector(0)", "legendFormat": "queues"}],
+      "fieldConfig": {"defaults": {"unit": "short", "thresholds": {"mode": "absolute", "steps": [{"color": "green"}, {"color": "yellow", "value": 1}, {"color": "red", "value": 3}]}}, "overrides": []}
+    },
+    {
+      "id": 114,
+      "title": "Total Ready Backlog",
+      "description": "Total ready messages across telemetry and dashboard queues.",
+      "type": "stat",
+      "gridPos": {"h": 6, "w": 4, "x": 20, "y": 67},
+      "datasource": {"type": "prometheus", "uid": "prometheus"},
+      "targets": [{"expr": "sum(rabbitmq_detailed_queue_messages_ready{queue=~\"telemetry.*|vehicle.*\"}) or sum(rabbitmq_queue_messages_ready{queue=~\"telemetry.*|vehicle.*\"}) or sum(rabbitmq_queue_messages_ready{job=\"rabbitmq\"}) or vector(0)", "legendFormat": "ready"}],
+      "fieldConfig": {"defaults": {"unit": "short", "thresholds": {"mode": "absolute", "steps": [{"color": "green"}, {"color": "yellow", "value": 100}, {"color": "red", "value": 1000}]}}, "overrides": []}
+    },
+    {
+      "id": 115,
+      "title": "Queue Depth Over Time",
+      "description": "Ready message backlog over time for telemetry and dashboard queues.",
+      "type": "timeseries",
+      "gridPos": {"h": 8, "w": 12, "x": 0, "y": 73},
+      "datasource": {"type": "prometheus", "uid": "prometheus"},
+      "targets": [{"expr": "sum by (queue) (rabbitmq_detailed_queue_messages_ready{queue=~\"telemetry.*|vehicle.*\"}) or sum by (name) (rabbitmq_detailed_queue_messages_ready{name=~\"telemetry.*|vehicle.*\"}) or sum by (queue) (rabbitmq_queue_messages_ready{queue=~\"telemetry.*|vehicle.*\"})", "legendFormat": "{{queue}}{{name}}"}]
+    },
+    {
+      "id": 116,
+      "title": "Unacked Over Time",
+      "description": "Unacked message count over time for telemetry and dashboard queues.",
+      "type": "timeseries",
+      "gridPos": {"h": 8, "w": 12, "x": 12, "y": 73},
+      "datasource": {"type": "prometheus", "uid": "prometheus"},
+      "targets": [{"expr": "sum by (queue) (rabbitmq_detailed_queue_messages_unacked{queue=~\"telemetry.*|vehicle.*\"}) or sum by (name) (rabbitmq_detailed_queue_messages_unacked{name=~\"telemetry.*|vehicle.*\"}) or sum by (queue) (rabbitmq_queue_messages_unacked{queue=~\"telemetry.*|vehicle.*\"})", "legendFormat": "{{queue}}{{name}}"}]
+    },
+    {
+      "id": 117,
+      "title": "Has DLQ Messages?",
+      "description": "DLQ > 0 means poison messages or permanent processing failures.",
+      "type": "stat",
+      "gridPos": {"h": 7, "w": 6, "x": 0, "y": 81},
+      "datasource": {"type": "prometheus", "uid": "prometheus"},
+      "targets": [{"expr": "sum(rabbitmq_detailed_queue_messages_ready{queue=\"telemetry.events.dlq\"}) or sum(rabbitmq_queue_messages_ready{queue=\"telemetry.events.dlq\"}) or vector(0)", "legendFormat": "dlq"}],
+      "fieldConfig": {"defaults": {"unit": "short", "thresholds": {"mode": "absolute", "steps": [{"color": "green"}, {"color": "yellow", "value": 1}, {"color": "red", "value": 10}]}}, "overrides": []}
+    },
+    {
+      "id": 118,
+      "title": "Has Retry Backlog?",
+      "description": "Retry backlog indicates recoverable failures or processor instability.",
+      "type": "stat",
+      "gridPos": {"h": 7, "w": 6, "x": 6, "y": 81},
+      "datasource": {"type": "prometheus", "uid": "prometheus"},
+      "targets": [{"expr": "sum(rabbitmq_detailed_queue_messages_ready{queue=\"telemetry.events.retry\"}) or sum(rabbitmq_queue_messages_ready{queue=\"telemetry.events.retry\"}) or vector(0)", "legendFormat": "retry"}],
+      "fieldConfig": {"defaults": {"unit": "short", "thresholds": {"mode": "absolute", "steps": [{"color": "green"}, {"color": "yellow", "value": 1}, {"color": "red", "value": 50}]}}, "overrides": []}
+    },
+    {
+      "id": 119,
+      "title": "Has Main Backlog?",
+      "description": "Main backlog means ingestion is outpacing processor consumption.",
+      "type": "stat",
+      "gridPos": {"h": 7, "w": 6, "x": 12, "y": 81},
+      "datasource": {"type": "prometheus", "uid": "prometheus"},
+      "targets": [{"expr": "sum(rabbitmq_detailed_queue_messages_ready{queue=\"telemetry.events\"}) or sum(rabbitmq_queue_messages_ready{queue=\"telemetry.events\"}) or vector(0)", "legendFormat": "main"}],
+      "fieldConfig": {"defaults": {"unit": "short", "thresholds": {"mode": "absolute", "steps": [{"color": "green"}, {"color": "yellow", "value": 100}, {"color": "red", "value": 1000}]}}, "overrides": []}
+    },
+    {
+      "id": 120,
+      "title": "Has Unacked Messages?",
+      "description": "High unacked values indicate slow or stuck consumers before ACK.",
+      "type": "stat",
+      "gridPos": {"h": 7, "w": 6, "x": 18, "y": 81},
+      "datasource": {"type": "prometheus", "uid": "prometheus"},
+      "targets": [{"expr": "sum(rabbitmq_detailed_queue_messages_unacked{queue=~\"telemetry.*|vehicle.*\"}) or sum(rabbitmq_queue_messages_unacked{queue=~\"telemetry.*|vehicle.*\"}) or sum(rabbitmq_queue_messages_unacked{job=\"rabbitmq\"}) or vector(0)", "legendFormat": "unacked"}],
+      "fieldConfig": {"defaults": {"unit": "short", "thresholds": {"mode": "absolute", "steps": [{"color": "green"}, {"color": "yellow", "value": 10}, {"color": "red", "value": 100}]}}, "overrides": []}
+    },
+    {
+      "id": 25,
+      "title": "E) Processor",
+      "type": "row",
+      "gridPos": {"h": 1, "w": 24, "x": 0, "y": 89},
+      "collapsed": false,
+      "panels": []
+    },
+    {
+      "id": 26,
+      "title": "Processor HTTP RPS",
+      "description": "HTTP traffic to telemetry-processor-service, if any operational endpoints are used.",
+      "type": "stat",
+      "gridPos": {"h": 5, "w": 6, "x": 0, "y": 90},
+      "datasource": {"type": "prometheus", "uid": "prometheus"},
+      "targets": [{"expr": "sum(rate(http_server_requests_seconds_count{job=\"telemetry-processor-service\"}[1m]))", "legendFormat": "rps"}],
+      "fieldConfig": {"defaults": {"unit": "reqps"}, "overrides": []}
+    },
+    {
+      "id": 27,
+      "title": "Processor HTTP Errors",
+      "description": "4xx and 5xx responses from telemetry-processor-service.",
+      "type": "stat",
+      "gridPos": {"h": 5, "w": 6, "x": 6, "y": 90},
+      "datasource": {"type": "prometheus", "uid": "prometheus"},
+      "targets": [{"expr": "sum(rate(http_server_requests_seconds_count{job=\"telemetry-processor-service\",status=~\"5..|4..\"}[1m]))", "legendFormat": "errors"}],
+      "fieldConfig": {"defaults": {"unit": "reqps"}, "overrides": []}
+    },
+    {
+      "id": 28,
+      "title": "Processor AMQP Listener Consumed Rate",
+      "type": "stat",
+      "gridPos": {"h": 5, "w": 6, "x": 12, "y": 90},
+      "datasource": {"type": "prometheus", "uid": "prometheus"},
+      "targets": [{"expr": "sum(rate(spring_rabbitmq_listener_seconds_count{job=\"telemetry-processor-service\"}[1m]))", "legendFormat": "consumed/s"}],
+      "fieldConfig": {"defaults": {"unit": "ops"}, "overrides": []}
+    },
+    {
+      "id": 29,
+      "title": "TODO - Custom metric required - Processor Events Processed",
+      "type": "stat",
+      "gridPos": {"h": 5, "w": 6, "x": 18, "y": 90},
+      "datasource": {"type": "prometheus", "uid": "prometheus"},
+      "targets": [{"expr": "sum(rate(telemetry_processor_events_processed_total[1m]))", "legendFormat": "processed/s"}],
+      "fieldConfig": {"defaults": {"unit": "ops"}, "overrides": []}
+    },
+    {
+      "id": 30,
+      "title": "TODO - Custom metric required - Processor Events Failed",
+      "type": "stat",
+      "gridPos": {"h": 5, "w": 8, "x": 0, "y": 95},
+      "datasource": {"type": "prometheus", "uid": "prometheus"},
+      "targets": [{"expr": "sum(rate(telemetry_processor_events_failed_total[1m]))", "legendFormat": "failed/s"}],
+      "fieldConfig": {"defaults": {"unit": "ops"}, "overrides": []}
+    },
+    {
+      "id": 31,
+      "title": "TODO - Custom metric required - Processor Sent To Retry",
+      "type": "stat",
+      "gridPos": {"h": 5, "w": 8, "x": 8, "y": 95},
+      "datasource": {"type": "prometheus", "uid": "prometheus"},
+      "targets": [{"expr": "sum(rate(telemetry_processor_events_sent_to_retry_total[1m]))", "legendFormat": "retry/s"}],
+      "fieldConfig": {"defaults": {"unit": "ops"}, "overrides": []}
+    },
+    {
+      "id": 32,
+      "title": "TODO - Custom metric required - Processor Sent To DLQ",
+      "type": "stat",
+      "gridPos": {"h": 5, "w": 8, "x": 16, "y": 95},
+      "datasource": {"type": "prometheus", "uid": "prometheus"},
+      "targets": [{"expr": "sum(rate(telemetry_processor_events_sent_to_dlq_total[1m]))", "legendFormat": "dlq/s"}],
+      "fieldConfig": {"defaults": {"unit": "ops"}, "overrides": []}
+    },
+    {
+      "id": 33,
+      "title": "F) Alerts",
+      "type": "row",
+      "gridPos": {"h": 1, "w": 24, "x": 0, "y": 100},
+      "collapsed": false,
+      "panels": []
+    },
+    {
+      "id": 34,
+      "title": "TODO - Custom metric required - Alerts Published",
+      "description": "Will show processor-published alerts when telemetry_processor_alerts_published_total is added.",
+      "type": "stat",
+      "gridPos": {"h": 5, "w": 8, "x": 0, "y": 101},
+      "datasource": {"type": "prometheus", "uid": "prometheus"},
+      "targets": [{"expr": "sum(rate(telemetry_processor_alerts_published_total[1m]))", "legendFormat": "alerts/s"}],
+      "fieldConfig": {"defaults": {"unit": "ops"}, "overrides": []}
+    },
+    {
+      "id": 35,
+      "title": "telemetry.alerts Queue Depth",
+      "description": "Current alert backlog waiting for consumers.",
+      "type": "stat",
+      "gridPos": {"h": 5, "w": 8, "x": 8, "y": 101},
+      "datasource": {"type": "prometheus", "uid": "prometheus"},
+      "targets": [{"expr": "sum(rabbitmq_detailed_queue_messages_ready{queue=\"telemetry.alerts\"}) or sum(rabbitmq_queue_messages_ready{queue=\"telemetry.alerts\"}) or vector(0)", "legendFormat": "alerts"}]
+    },
+    {
+      "id": 36,
+      "title": "Alerts Queue Depth",
+      "description": "Alert backlog over time.",
+      "type": "timeseries",
+      "gridPos": {"h": 7, "w": 8, "x": 16, "y": 101},
+      "datasource": {"type": "prometheus", "uid": "prometheus"},
+      "targets": [{"expr": "sum(rabbitmq_detailed_queue_messages_ready{queue=\"telemetry.alerts\"}) or sum(rabbitmq_queue_messages_ready{queue=\"telemetry.alerts\"}) or vector(0)", "legendFormat": "telemetry.alerts"}]
+    },
+    {
+      "id": 37,
+      "title": "G) DLQ / Reprocessing",
+      "type": "row",
+      "gridPos": {"h": 1, "w": 24, "x": 0, "y": 108},
+      "collapsed": false,
+      "panels": []
+    },
+    {
+      "id": 38,
+      "title": "DLQ Service AMQP Listener Consumed Rate",
+      "type": "stat",
+      "gridPos": {"h": 5, "w": 5, "x": 0, "y": 109},
+      "datasource": {"type": "prometheus", "uid": "prometheus"},
+      "targets": [{"expr": "sum(rate(spring_rabbitmq_listener_seconds_count{job=\"telemetry-dlq-service\"}[1m]))", "legendFormat": "consumed/s"}],
+      "fieldConfig": {"defaults": {"unit": "ops"}, "overrides": []}
+    },
+    {
+      "id": 39,
+      "title": "TODO - Custom metric required - DLQ Records Created",
+      "type": "stat",
+      "gridPos": {"h": 5, "w": 5, "x": 5, "y": 109},
+      "datasource": {"type": "prometheus", "uid": "prometheus"},
+      "targets": [{"expr": "sum(rate(telemetry_dlq_records_created_total[1m]))", "legendFormat": "records/s"}],
+      "fieldConfig": {"defaults": {"unit": "ops"}, "overrides": []}
+    },
+    {
+      "id": 40,
+      "title": "TODO - Custom metric required - Reprocess Requested",
+      "type": "stat",
+      "gridPos": {"h": 5, "w": 5, "x": 10, "y": 109},
+      "datasource": {"type": "prometheus", "uid": "prometheus"},
+      "targets": [{"expr": "sum(rate(telemetry_dlq_reprocess_requested_total[1m]))", "legendFormat": "requested/s"}],
+      "fieldConfig": {"defaults": {"unit": "ops"}, "overrides": []}
+    },
+    {
+      "id": 41,
+      "title": "TODO - Custom metric required - Reprocess Published",
+      "type": "stat",
+      "gridPos": {"h": 5, "w": 5, "x": 15, "y": 109},
+      "datasource": {"type": "prometheus", "uid": "prometheus"},
+      "targets": [{"expr": "sum(rate(telemetry_dlq_reprocess_published_total[1m]))", "legendFormat": "published/s"}],
+      "fieldConfig": {"defaults": {"unit": "ops"}, "overrides": []}
+    },
+    {
+      "id": 42,
+      "title": "TODO - Custom metric required - Reprocess Failed",
+      "type": "stat",
+      "gridPos": {"h": 5, "w": 4, "x": 20, "y": 109},
+      "datasource": {"type": "prometheus", "uid": "prometheus"},
+      "targets": [{"expr": "sum(rate(telemetry_dlq_reprocess_failed_total[1m]))", "legendFormat": "failed/s"}],
+      "fieldConfig": {"defaults": {"unit": "ops"}, "overrides": []}
+    },
+    {
+      "id": 43,
+      "title": "DLQ Depth",
+      "description": "Current and historical ready messages in telemetry.events.dlq.",
+      "type": "timeseries",
+      "gridPos": {"h": 7, "w": 24, "x": 0, "y": 114},
+      "datasource": {"type": "prometheus", "uid": "prometheus"},
+      "targets": [{"expr": "sum(rabbitmq_detailed_queue_messages_ready{queue=\"telemetry.events.dlq\"}) or sum(rabbitmq_queue_messages_ready{queue=\"telemetry.events.dlq\"}) or vector(0)", "legendFormat": "telemetry.events.dlq"}]
+    },
+    {
+      "id": 44,
+      "title": "H) HTTP / Latency",
+      "type": "row",
+      "gridPos": {"h": 1, "w": 24, "x": 0, "y": 121},
+      "collapsed": false,
+      "panels": []
+    },
+    {
+      "id": 45,
+      "title": "HTTP RPS by Job",
+      "description": "Request rate by Prometheus job across the full telemetry path.",
+      "type": "timeseries",
+      "gridPos": {"h": 8, "w": 8, "x": 0, "y": 122},
+      "datasource": {"type": "prometheus", "uid": "prometheus"},
+      "targets": [{"expr": "sum by (job) (rate(http_server_requests_seconds_count{job=~\"${service:regex}\"}[1m]))", "legendFormat": "{{job}}"}],
+      "fieldConfig": {"defaults": {"unit": "reqps"}, "overrides": []}
+    },
+    {
+      "id": 46,
+      "title": "HTTP Error Rate by Job",
+      "description": "4xx and 5xx rate by Prometheus job.",
+      "type": "timeseries",
+      "gridPos": {"h": 8, "w": 8, "x": 8, "y": 122},
+      "datasource": {"type": "prometheus", "uid": "prometheus"},
+      "targets": [{"expr": "sum by (job) (rate(http_server_requests_seconds_count{job=~\"${service:regex}\",status=~\"5..|4..\"}[1m]))", "legendFormat": "{{job}}"}],
+      "fieldConfig": {"defaults": {"unit": "reqps"}, "overrides": []}
+    },
+    {
+      "id": 47,
+      "title": "Average Latency by Job",
+      "description": "Average HTTP latency by Prometheus job.",
+      "type": "timeseries",
+      "gridPos": {"h": 8, "w": 8, "x": 16, "y": 122},
+      "datasource": {"type": "prometheus", "uid": "prometheus"},
+      "targets": [{"expr": "sum by (job) (rate(http_server_requests_seconds_sum{job=~\"${service:regex}\"}[1m])) / clamp_min(sum by (job) (rate(http_server_requests_seconds_count{job=~\"${service:regex}\"}[1m])), 1)", "legendFormat": "{{job}}"}],
+      "fieldConfig": {"defaults": {"unit": "s"}, "overrides": []}
+    },
+    {
+      "id": 48,
+      "title": "I) JVM Quick Health",
+      "type": "row",
+      "gridPos": {"h": 1, "w": 24, "x": 0, "y": 130},
+      "collapsed": false,
+      "panels": []
+    },
+    {
+      "id": 49,
+      "title": "JVM Memory Used by Job",
+      "description": "Total JVM memory used per Prometheus job.",
+      "type": "timeseries",
+      "gridPos": {"h": 8, "w": 8, "x": 0, "y": 131},
+      "datasource": {"type": "prometheus", "uid": "prometheus"},
+      "targets": [{"expr": "sum by (job, area) (jvm_memory_used_bytes{job=~\"${service:regex}\"})", "legendFormat": "{{job}} {{area}}"}],
+      "fieldConfig": {"defaults": {"unit": "bytes"}, "overrides": []}
+    },
+    {
+      "id": 50,
+      "title": "JVM Threads Live by Job",
+      "description": "Live JVM thread count by Prometheus job.",
+      "type": "timeseries",
+      "gridPos": {"h": 8, "w": 8, "x": 8, "y": 131},
+      "datasource": {"type": "prometheus", "uid": "prometheus"},
+      "targets": [{"expr": "sum by (job) (jvm_threads_live_threads{job=~\"${service:regex}\"})", "legendFormat": "{{job}}"}]
+    },
+    {
+      "id": 51,
+      "title": "Process CPU Usage by Job",
+      "description": "Process CPU usage exported by Spring Boot Actuator.",
+      "type": "timeseries",
+      "gridPos": {"h": 8, "w": 8, "x": 16, "y": 131},
+      "datasource": {"type": "prometheus", "uid": "prometheus"},
+      "targets": [{"expr": "process_cpu_usage{job=~\"${service:regex}\"}", "legendFormat": "{{job}}"}],
+      "fieldConfig": {"defaults": {"unit": "percentunit"}, "overrides": []}
+    }
+  ]
+}
