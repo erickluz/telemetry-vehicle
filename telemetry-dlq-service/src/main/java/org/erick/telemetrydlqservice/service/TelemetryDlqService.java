@@ -7,6 +7,7 @@ import org.erick.shared.messaging.RabbitMQConstants;
 import org.erick.shared.model.TelemetryDlqMessage;
 import org.erick.shared.model.TelemetryDlqStatus;
 import org.erick.shared.model.TelemetryEvent;
+import org.erick.telemetrydlqservice.TelemetryDlqRecordMapper;
 import org.erick.telemetrydlqservice.dto.TelemetryDlqRecordDto;
 import org.erick.telemetrydlqservice.model.TelemetryDlqRecord;
 import org.erick.telemetrydlqservice.repository.TelemetryDlqRecordRepository;
@@ -43,12 +44,12 @@ public class TelemetryDlqService {
 
     public List<TelemetryDlqRecordDto> findAllDtos(TelemetryDlqStatus status) {
         return findAllRecords(status).stream()
-                .map(this::toDto)
+                .map(TelemetryDlqRecordMapper.MAPPER::toDto)
                 .toList();
     }
 
     public TelemetryDlqRecordDto findDtoById(Long id) {
-        return toDto(findById(id));
+        return TelemetryDlqRecordMapper.MAPPER.toDto(findById(id));
     }
 
     private List<TelemetryDlqRecord> findAllRecords(TelemetryDlqStatus status) {
@@ -91,13 +92,14 @@ public class TelemetryDlqService {
         if (updatedRecord.getReprocessCount() != null) {
             record.setReprocessCount(updatedRecord.getReprocessCount());
         }
-        return toDto(repository.save(record));
+        
+        return TelemetryDlqRecordMapper.MAPPER.toDto(repository.save(record));
     }
 
     public TelemetryDlqRecordDto updateStatus(Long id, TelemetryDlqStatus status) {
         TelemetryDlqRecord record = findById(id);
         record.setStatus(status);
-        return toDto(repository.save(record));
+        return TelemetryDlqRecordMapper.MAPPER.toDto(repository.save(record));
     }
 
     public void reprocess(Long id) {
@@ -166,25 +168,6 @@ public class TelemetryDlqService {
         event.setTemperature(record.getTemperature());
         event.setFuelLevel(record.getFuelLevel());
         return event;
-    }
-
-    private TelemetryDlqRecordDto toDto(TelemetryDlqRecord record) {
-        TelemetryDlqRecordDto dto = new TelemetryDlqRecordDto();
-        dto.setId(record.getId());
-        dto.setStatus(record.getStatus());
-        dto.setDlqTimestamp(record.getDlqTimestamp());
-        dto.setExceptionClass(record.getExceptionClass());
-        dto.setErrorMessage(record.getErrorMessage());
-        dto.setStackTrace(record.getStackTrace());
-        dto.setVehicleId(record.getVehicleId());
-        dto.setOriginalTimestamp(record.getOriginalTimestamp());
-        dto.setLatitude(record.getLatitude());
-        dto.setLongitude(record.getLongitude());
-        dto.setSpeed(record.getSpeed());
-        dto.setTemperature(record.getTemperature());
-        dto.setFuelLevel(record.getFuelLevel());
-        dto.setReprocessCount(record.getReprocessCount());
-        return dto;
     }
 
     private int nextReprocessCount(TelemetryDlqRecord record) {
