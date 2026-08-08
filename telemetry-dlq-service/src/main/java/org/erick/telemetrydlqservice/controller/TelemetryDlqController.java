@@ -4,7 +4,7 @@ import java.util.List;
 import java.util.NoSuchElementException;
 
 import org.erick.shared.model.TelemetryDlqStatus;
-import org.erick.telemetrydlqservice.model.TelemetryDlqRecord;
+import org.erick.telemetrydlqservice.dto.TelemetryDlqRecordDto;
 import org.erick.telemetrydlqservice.service.TelemetryDlqService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -55,14 +55,14 @@ public class TelemetryDlqController {
                 description = "DLQ records listed",
                 content = @Content(
                         mediaType = "application/json",
-                        array = @ArraySchema(schema = @Schema(implementation = TelemetryDlqRecord.class))))
+                        array = @ArraySchema(schema = @Schema(implementation = TelemetryDlqRecordDto.class))))
     })
-    public ResponseEntity<List<TelemetryDlqRecord>> list(
+    public ResponseEntity<List<TelemetryDlqRecordDto>> list(
             @Parameter(
                     description = "Optional status filter for DLQ records.",
                     example = "PENDENTE")
             @RequestParam(value = "status", required = false) TelemetryDlqStatus status) {
-        return ResponseEntity.ok(telemetryDlqService.findAll(status));
+        return ResponseEntity.ok(telemetryDlqService.findAllDtos(status));
     }
 
     @GetMapping("/{id}")
@@ -75,13 +75,13 @@ public class TelemetryDlqController {
                 description = "DLQ record found",
                 content = @Content(
                         mediaType = "application/json",
-                        schema = @Schema(implementation = TelemetryDlqRecord.class))),
+                        schema = @Schema(implementation = TelemetryDlqRecordDto.class))),
         @ApiResponse(responseCode = "404", description = "DLQ record not found", content = @Content)
     })
-    public ResponseEntity<TelemetryDlqRecord> findById(
+    public ResponseEntity<TelemetryDlqRecordDto> findById(
             @Parameter(description = "DLQ record database identifier", example = "42")
             @PathVariable("id") Long id) {
-        return ResponseEntity.ok(telemetryDlqService.findById(id));
+        return ResponseEntity.ok(telemetryDlqService.findDtoById(id));
     }
 
     @PutMapping("/{id}")
@@ -97,10 +97,10 @@ public class TelemetryDlqController {
                 description = "DLQ record updated",
                 content = @Content(
                         mediaType = "application/json",
-                        schema = @Schema(implementation = TelemetryDlqRecord.class))),
+                        schema = @Schema(implementation = TelemetryDlqRecordDto.class))),
         @ApiResponse(responseCode = "404", description = "DLQ record not found", content = @Content)
     })
-    public ResponseEntity<TelemetryDlqRecord> update(
+    public ResponseEntity<TelemetryDlqRecordDto> update(
             @Parameter(description = "DLQ record database identifier", example = "42")
             @PathVariable("id") Long id,
             @io.swagger.v3.oas.annotations.parameters.RequestBody(
@@ -108,7 +108,7 @@ public class TelemetryDlqController {
                     description = "Replacement values for the persisted DLQ record.",
                     content = @Content(
                             mediaType = "application/json",
-                            schema = @Schema(implementation = TelemetryDlqRecord.class),
+                            schema = @Schema(implementation = TelemetryDlqRecordDto.class),
                             examples = @ExampleObject(
                                     name = "dlqRecordUpdate",
                                     summary = "Correct a failed telemetry record",
@@ -122,7 +122,7 @@ public class TelemetryDlqController {
                                               "reprocessCount": 0
                                             }
                                             """)))
-            @RequestBody TelemetryDlqRecord updatedRecord) {
+            @RequestBody TelemetryDlqRecordDto updatedRecord) {
         return ResponseEntity.ok(telemetryDlqService.update(id, updatedRecord));
     }
 
@@ -151,10 +151,10 @@ public class TelemetryDlqController {
                 description = "DLQ status updated",
                 content = @Content(
                         mediaType = "application/json",
-                        schema = @Schema(implementation = TelemetryDlqRecord.class))),
+                        schema = @Schema(implementation = TelemetryDlqRecordDto.class))),
         @ApiResponse(responseCode = "404", description = "DLQ record not found", content = @Content)
     })
-    public ResponseEntity<TelemetryDlqRecord> updateStatus(
+    public ResponseEntity<TelemetryDlqRecordDto> updateStatus(
             @Parameter(description = "DLQ record database identifier", example = "42")
             @PathVariable("id") Long id,
             @Parameter(description = "New operational status for the DLQ record", example = "REPROCESSADO")
